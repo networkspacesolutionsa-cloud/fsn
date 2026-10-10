@@ -6,6 +6,8 @@
   "assets": {
     "directory": "./dist",
     // Serve index.html for unknown paths so client-side routes work
-    "not_found_handling": "single-page-application"
+    "not_found_handling": "single-page-application",
+    // Serve files like google….html at their exact URL (no redirect to the .html-less path)
+    "html_handling": "none"
   }
 }
