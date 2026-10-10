@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Must match the Worker name you choose in the Cloudflare dashboard
+  "name": "fsn",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    // Serve index.html for unknown paths so client-side routes work
+    "not_found_handling": "single-page-application"
+  }
+}
