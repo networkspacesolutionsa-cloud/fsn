@@ -1,0 +1,6 @@
+{
+  "name": "FSN | فضاء الشبكات",
+  "description": "حلول احترافية للشبكات والأنظمة الأمنية للمنازل والشركات والمنشآت - كاميرات المراقبة، تمديد وصيانة الشبكات، وأنظمة الإنتركوم.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

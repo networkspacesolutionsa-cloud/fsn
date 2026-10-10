@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+/* Theme is chosen by the visitor (header toggle), not the OS: `dark:` follows <html class="dark"> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Cairo', 'IBM Plex Sans Arabic', system-ui, -apple-system, sans-serif;
+  --color-fsn-navy: #0b1a30;
+  --color-fsn-dark: #081324;
+  --color-fsn-blue: #0284c7;
+  --color-fsn-blue-hover: #0369a1;
+  --color-fsn-cyan: #0284c7;
+
+  /* Brand blue from the logo (#0284c7): every `blue-*` utility uses the logo's palette */
+  --color-blue-50: oklch(97.7% 0.013 236.62);
+  --color-blue-100: oklch(95.1% 0.026 236.824);
+  --color-blue-200: oklch(90.1% 0.058 230.902);
+  --color-blue-300: oklch(82.8% 0.111 230.318);
+  --color-blue-400: oklch(74.6% 0.16 232.661);
+  --color-blue-500: oklch(68.5% 0.169 237.323);
+  --color-blue-600: oklch(58.8% 0.158 241.966);
+  --color-blue-700: oklch(50% 0.134 242.749);
+  --color-blue-800: oklch(44.3% 0.11 240.79);
+  --color-blue-900: oklch(39.1% 0.09 240.876);
+  --color-blue-950: oklch(29.3% 0.066 243.157);
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: only light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  font-family: 'Cairo', 'IBM Plex Sans Arabic', system-ui, -apple-system, sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Intentionally the same light colors: declaring a prefers-color-scheme rule tells Android
+   in-app browsers (WebView) the page handles dark mode itself, so they don't auto-darken it */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #f8fafc;
+    color: #1e293b;
+  }
+}
+
+/* iOS Safari zooms the page when focusing a field under 16px */
+@media (max-width: 639px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+html.dark body {
+  background-color: #020617;
+  color: #e2e8f0;
+}
+
+/* Horizontal swipe rows (filter chips, mobile carousels) */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+html.dark ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
