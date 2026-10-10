@@ -10,6 +10,8 @@ const isAdmin = window.location.pathname.replace(/\/+$/, '') === '/admin';
 if (isAdmin) {
   // The control panel is light-only, whatever theme the visitor picked on the site
   document.documentElement.classList.remove('dark');
+  // Never index the control panel (public/_headers also sends X-Robots-Tag: noindex)
+  document.querySelector('meta[name="robots"]')?.setAttribute('content', 'noindex, nofollow');
 }
 
 createRoot(document.getElementById('root')!).render(

@@ -1,35 +1,9 @@
 import React, { useState } from 'react';
 import { HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { FAQS } from '../content/faqs';
 
 export const FaqSection: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-
-  const faqs = [
-    {
-      q: 'هل تقدمون معاينة للموقع؟',
-      a: 'نعم، تتوفر خدمة المعاينة لبعض الخدمات التي تحتاج إلى دراسة الموقع، مثل مشاريع كاميرات المراقبة وتمديد الشبكات وتغطية الإنترنت.',
-    },
-    {
-      q: 'هل الأسعار تشمل الأجهزة؟',
-      a: 'يختلف ذلك حسب الخدمة. بعض الخدمات هي خدمات تركيب وبرمجة فقط، ويتم توضيح ما يشمله السعر وما لا يشمله داخل تفاصيل كل خدمة.',
-    },
-    {
-      q: 'هل يمكن تركيب جهاز اشتريته مسبقًا؟',
-      a: 'نعم، تتوفر بعض خدمات التركيب والبرمجة للأجهزة التي يمتلكها العميل، حسب طبيعة الجهاز ووصف الخدمة.',
-    },
-    {
-      q: 'هل تمديد الكابلات مشمول؟',
-      a: 'يختلف حسب الخدمة. يتم توضيح طول التمديد وما يشمله السعر في تفاصيل كل خدمة قبل التنفيذ.',
-    },
-    {
-      q: 'هل تخدمون المنازل والشركات؟',
-      a: 'نعم، نقدم حلولًا للمنازل والفلل والمكاتب والمنشآت التجارية.',
-    },
-    {
-      q: 'كيف أحصل على عرض سعر؟',
-      a: 'يمكنك التواصل معنا أو استخدام نموذج حجز الموعد، وفي الخدمات التي تحتاج إلى معاينة يتم تحديد احتياج الموقع ثم تقديم العرض المناسب.',
-    },
-  ];
 
   const toggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -55,7 +29,7 @@ export const FaqSection: React.FC = () => {
 
         {/* FAQ Accordion List */}
         <div className="space-y-4 text-right">
-          {faqs.map((faq, index) => {
+          {FAQS.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
               <div

@@ -31,11 +31,22 @@ const readCache = (): SiteContent | null => {
   }
 };
 
+/** Rows the build-time prerender fetched from Supabase and embedded in index.html */
+const readEmbedded = (): SiteContent | null => {
+  const rows = typeof window !== 'undefined' ? (window as any).__FSN_CONTENT__ : undefined;
+  return Array.isArray(rows) ? mergeContent(rows) : null;
+};
+
 const ContentContext = createContext<SiteContent>(DEFAULT_CONTENT);
 
-export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ContentProvider: React.FC<{ children: React.ReactNode; initialContent?: SiteContent }> = ({
+  children,
+  initialContent,
+}) => {
   // Last-seen content from this browser first, so returning visitors don't see old prices flash
-  const [content, setContent] = useState<SiteContent>(() => readCache() ?? DEFAULT_CONTENT);
+  const [content, setContent] = useState<SiteContent>(
+    () => initialContent ?? readCache() ?? readEmbedded() ?? DEFAULT_CONTENT
+  );
 
   useEffect(() => {
     if (!supabase) return;

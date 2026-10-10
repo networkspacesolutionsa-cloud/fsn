@@ -5,7 +5,10 @@ const STORAGE_KEY = 'fsn-theme';
 
 export const ThemeToggle: React.FC<{ className?: string }> = ({ className = '' }) => {
   // index.html applies the saved theme before React loads; read it back from the <html> class
-  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
+  // (no document during the build-time prerender)
+  const [isDark, setIsDark] = useState(
+    () => typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+  );
 
   const toggle = () => {
     const next = !isDark;

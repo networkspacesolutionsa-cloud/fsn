@@ -1,0 +1,9 @@
+# Keep the control panel out of search results
+/admin
+  X-Robots-Tag: noindex, nofollow
+/admin/*
+  X-Robots-Tag: noindex, nofollow
+
+# Hashed build files never change: let browsers cache them for a year (faster repeat visits)
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
