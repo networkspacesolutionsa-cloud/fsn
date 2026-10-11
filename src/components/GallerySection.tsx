@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Image as ImageIcon, ZoomIn, X, MapPin, Calendar, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { Image as ImageIcon, ZoomIn, X, MapPin, Calendar, CheckCircle2, ArrowLeft, SplitSquareHorizontal } from 'lucide-react';
 import { useLockBodyScroll } from './useLockBodyScroll';
 import { useContent } from '../content/ContentContext';
+import { BeforeAfterSlider } from './BeforeAfterSlider';
 import type { GalleryItem } from '../content/types';
 
 interface GallerySectionProps {
@@ -9,16 +10,21 @@ interface GallerySectionProps {
 }
 
 export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingForWork }) => {
-  const [selectedCategory, setSelectedCategory] = useState<'all' | GalleryItem['category']>('all');
+  const [selectedCategory, setSelectedCategory] = useState<'all' | 'beforeAfter' | GalleryItem['category']>('all');
   const [activeItem, setActiveItem] = useState<GalleryItem | null>(null);
   useLockBodyScroll(activeItem !== null);
 
   const { gallery: galleryItems } = useContent();
 
+  const hasCompare = (item: GalleryItem) => Boolean(item.image && item.beforeImage);
+  const compareCount = galleryItems.filter(hasCompare).length;
+
   const filteredItems =
     selectedCategory === 'all'
       ? galleryItems
-      : galleryItems.filter((item) => item.category === selectedCategory);
+      : selectedCategory === 'beforeAfter'
+        ? galleryItems.filter(hasCompare)
+        : galleryItems.filter((item) => item.category === selectedCategory);
 
   const handleBookWork = (work: GalleryItem) => {
     setActiveItem(null);
@@ -39,13 +45,14 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800/60 text-blue-700 dark:text-blue-300 text-xs font-bold mb-3">
             <ImageIcon className="w-3.5 h-3.5" />
-            <span>معرض الصور والأعمال الميدانية</span>
+            <span>معرض الأعمال</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
-            معرض صور FSN | فضاء الشبكات
+            شاهد الفرق قبل وبعد التنفيذ
           </h2>
           <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed">
-            صور حقيقية وتوثيق ميداني لأحدث أعمال تمديد الشبكات، كبائن السيرفرات، كاميرات المراقبة 4K، وشاشات الإنتركوم الذكية في مختلف مدن ومناطق المملكة.
+            نماذج من أعمال تمديد الشبكات، وتنظيم كبائن السيرفرات، وتركيب كاميرات المراقبة وأنظمة الإنتركوم. حرّك الشريط على
+            الصورة لتقارن حالة الموقع قبل التنفيذ وبعده.
           </p>
         </div>
 
@@ -62,6 +69,19 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
             >
               جميع الصور ({galleryItems.length})
             </button>
+            {compareCount > 0 && (
+              <button
+                onClick={() => setSelectedCategory('beforeAfter')}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                  selectedCategory === 'beforeAfter'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 hover:bg-blue-100 dark:hover:bg-blue-900/50'
+                }`}
+              >
+                <SplitSquareHorizontal className="w-4 h-4" />
+                قبل وبعد ({compareCount})
+              </button>
+            )}
             <button
               onClick={() => setSelectedCategory('networks')}
               className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer whitespace-nowrap ${
@@ -115,7 +135,20 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
             >
               {/* Visual Card Canvas */}
               <div className={`relative w-full aspect-[4/3] bg-gradient-to-br ${item.gradient} p-4 flex flex-col justify-between overflow-hidden`}>
-                {item.image ? (
+                {hasCompare(item) ? (
+                  <>
+                    <BeforeAfterSlider
+                      before={item.beforeImage!}
+                      after={item.image!}
+                      alt={item.title}
+                      mode="hover"
+                      hint
+                      lazy
+                      labelsClassName="top-12"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/75 pointer-events-none" />
+                  </>
+                ) : item.image ? (
                   <>
                     <img
                       src={item.image}
@@ -132,7 +165,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
                 )}
 
                 {/* Top Badge */}
-                <div className="relative z-10 flex justify-between items-center">
+                <div className="relative z-10 flex justify-between items-center pointer-events-none">
                   <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-xs text-[10px] font-bold text-white border border-white/20">
                     {item.badge}
                   </span>
@@ -147,19 +180,19 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
                     <div className="text-4xl sm:text-5xl drop-shadow-md group-hover:scale-110 transition-transform duration-300">
                       {item.iconSymbol}
                     </div>
-                    <span className="text-[10px] text-blue-300 font-mono mt-2 font-bold tracking-wider">
-                      FSN REAL PROJECT
-                    </span>
+                    <span className="text-[10px] text-blue-300 font-mono mt-2 font-bold tracking-wider">FSN</span>
                   </div>
                 )}
 
                 {/* Bottom Meta Bar on Image */}
-                <div className="relative z-10 flex items-center justify-between text-[11px] text-slate-200">
-                  <span className="flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-blue-400" />
-                    <span>{item.location}</span>
-                  </span>
-                  <span>{item.date}</span>
+                <div className="relative z-10 flex items-center justify-between text-[11px] text-slate-200 pointer-events-none min-h-4">
+                  {item.location && (
+                    <span className="flex items-center gap-1">
+                      <MapPin className="w-3 h-3 text-blue-400" />
+                      <span>{item.location}</span>
+                    </span>
+                  )}
+                  {item.date && <span>{item.date}</span>}
                 </div>
               </div>
 
@@ -178,8 +211,17 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
                 </div>
 
                 <div className="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-blue-600 dark:text-blue-400">
-                  <span>تكبير الصورة والتفاصيل</span>
-                  <ZoomIn className="w-3.5 h-3.5" />
+                  {hasCompare(item) ? (
+                    <>
+                      <span>شاهد المقارنة قبل وبعد</span>
+                      <SplitSquareHorizontal className="w-3.5 h-3.5" />
+                    </>
+                  ) : (
+                    <>
+                      <span>تكبير الصورة والتفاصيل</span>
+                      <ZoomIn className="w-3.5 h-3.5" />
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -218,7 +260,19 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
 
               {/* Large Visual Area */}
               <div className={`relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-br ${activeItem.gradient} p-4 sm:p-8 flex flex-col justify-between overflow-hidden select-none`}>
-                {activeItem.image ? (
+                {hasCompare(activeItem) ? (
+                  <>
+                    <BeforeAfterSlider
+                      key={activeItem.id}
+                      before={activeItem.beforeImage!}
+                      after={activeItem.image!}
+                      alt={activeItem.title}
+                      hint
+                      labelsClassName="top-14 sm:top-20"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 pointer-events-none" />
+                  </>
+                ) : activeItem.image ? (
                   <>
                     <img src={activeItem.image} alt={activeItem.title} className="absolute inset-0 w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 pointer-events-none" />
@@ -227,11 +281,15 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
                   <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:24px_24px]" />
                 )}
 
-                <div className="relative z-10 flex justify-between items-center text-white">
+                <div className="relative z-10 flex justify-between items-center text-white pointer-events-none">
                   <span className="px-3 py-1 rounded-full bg-blue-900/60 border border-blue-400/40 text-xs font-bold">
                     {activeItem.badge}
                   </span>
-                  <span className="hidden sm:inline text-xs text-slate-300 font-mono">FSN-PROJECT-DOC</span>
+                  {hasCompare(activeItem) ? (
+                    <span className="px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 text-[11px] font-bold">
+                      اسحب الشريط للمقارنة ↔
+                    </span>
+                  ) : null}
                 </div>
 
                 {!activeItem.image && (
@@ -240,27 +298,35 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
                       {activeItem.iconSymbol}
                     </div>
                     <span className="text-xs sm:text-sm text-blue-200 font-bold text-center">
-                      فضاء الشبكات | صور المشاريع الحقيقية
+                      فضاء الشبكات FSN
                     </span>
                   </div>
                 )}
 
-                <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 text-xs text-slate-200 bg-black/40 backdrop-blur-xs p-2.5 rounded-xl border border-white/10">
-                  <span className="flex items-center gap-1.5 font-bold">
-                    <MapPin className="w-3.5 h-3.5 text-blue-400" />
-                    <span>الموقع: {activeItem.location}</span>
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-blue-400" />
-                    <span>تاريخ التنفيذ: {activeItem.date}</span>
-                  </span>
-                </div>
+                {activeItem.location || activeItem.date ? (
+                  <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 text-xs text-slate-200 bg-black/40 backdrop-blur-xs p-2.5 rounded-xl border border-white/10 pointer-events-none">
+                    {activeItem.location && (
+                      <span className="flex items-center gap-1.5 font-bold">
+                        <MapPin className="w-3.5 h-3.5 text-blue-400" />
+                        <span>الموقع: {activeItem.location}</span>
+                      </span>
+                    )}
+                    {activeItem.date && (
+                      <span className="flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-blue-400" />
+                        <span>تاريخ التنفيذ: {activeItem.date}</span>
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div />
+                )}
               </div>
 
               {/* Details & Specs */}
               <div className="p-5 sm:p-6 space-y-4">
                 <div>
-                  <h4 className="text-base font-bold text-slate-900 dark:text-white mb-2">وصف العمل المنفذ:</h4>
+                  <h4 className="text-base font-bold text-slate-900 dark:text-white mb-2">تفاصيل العمل:</h4>
                   <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                     {activeItem.description}
                   </p>
@@ -269,15 +335,15 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
                 <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200/80 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-200 space-y-2">
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-                    <span>فحص واختبار كامل للنظام بأحدث أجهزة الفحص المعتمدة عالمياً.</span>
+                    <span>فحص النظام وتجربته بالكامل قبل التسليم.</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-                    <span>تمديدات معزولة ومخفية بالكامل لضمان المظهر الجمالي والأمان.</span>
+                    <span>تمديدات مرتبة ومحمية تحافظ على مظهر المكان.</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-                    <span>ضمان معتمد على الأجهزة والتركيبات مع دعم فني مستمر.</span>
+                    <span>متابعة ودعم فني بعد التركيب.</span>
                   </div>
                 </div>
               </div>

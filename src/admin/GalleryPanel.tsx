@@ -74,13 +74,24 @@ export const GalleryPanel: React.FC = () => {
                   onClick={() => setOpenItem(open ? null : item.id)}
                   className="flex-1 flex items-center gap-3 text-right cursor-pointer min-w-0"
                 >
-                  <div className="w-16 h-12 rounded-lg overflow-hidden bg-slate-800 shrink-0 flex items-center justify-center text-xl">
-                    {item.image ? <img src={item.image} alt="" className="w-full h-full object-cover" /> : item.iconSymbol}
+                  <div className="relative w-16 h-12 rounded-lg overflow-hidden bg-slate-800 shrink-0 flex items-center justify-center text-xl">
+                    {item.image && item.beforeImage ? (
+                      <>
+                        <img src={item.beforeImage} alt="" className="absolute inset-y-0 right-0 w-1/2 h-full object-cover" />
+                        <img src={item.image} alt="" className="absolute inset-y-0 left-0 w-1/2 h-full object-cover" />
+                        <span className="absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 bg-white" />
+                      </>
+                    ) : item.image ? (
+                      <img src={item.image} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      item.iconSymbol
+                    )}
                   </div>
                   <div className="min-w-0">
                     <p className="font-bold text-sm text-slate-900 truncate">{item.title || 'بدون عنوان'}</p>
                     <p className="text-[11px] text-slate-500 truncate">
                       {item.categoryLabel} · {item.location} {!item.image && '· بدون صورة'}
+                      {item.image && item.beforeImage && '· قبل وبعد'}
                     </p>
                   </div>
                   <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
@@ -96,9 +107,22 @@ export const GalleryPanel: React.FC = () => {
               </div>
               {open && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t border-slate-100">
-                  <div className="md:col-span-2">
-                    <ImageInput label="صورة العمل" value={item.image} onChange={(url) => set('image')(url)} folder="gallery" />
-                  </div>
+                  <ImageInput
+                    label="صورة العمل (بعد التنفيذ)"
+                    value={item.image}
+                    onChange={(url) => set('image')(url)}
+                    folder="gallery"
+                  />
+                  <ImageInput
+                    label="صورة قبل التنفيذ (اختياري)"
+                    value={item.beforeImage}
+                    onChange={(url) => set('beforeImage')(url)}
+                    folder="gallery"
+                  />
+                  <p className="md:col-span-2 -mt-2 text-[11px] text-slate-500 leading-relaxed">
+                    عند رفع الصورتين تظهر في الموقع كمقارنة «قبل وبعد» بشريط سحب. للحصول على أفضل نتيجة صوّر المكان من نفس الزاوية
+                    والمسافة وبنفس اتجاه الجوال (عرضي أو طولي) في المرتين.
+                  </p>
                   <div className="md:col-span-2">
                     <Field label="العنوان" value={item.title} onChange={set('title')} />
                   </div>

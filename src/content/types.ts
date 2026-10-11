@@ -61,7 +61,10 @@ export interface GalleryItem {
   gradient: string;
   iconSymbol: string;
   badge: string;
+  /** The finished work ("after" when beforeImage is set) */
   image?: string;
+  /** Optional photo of the site before the work; with `image` it shows as a before/after slider */
+  beforeImage?: string;
 }
 
 export interface HeroHighlight {
@@ -121,29 +124,6 @@ export interface ServicePackage {
   /** Highlighted with a blue border */
   featured: boolean;
   /** Optional photo at the top of the card */
-  image?: string;
-  /**
-   * Set (even empty) = a group package that branches into these options; the group's own
-   * fields become the shared header and `price` reads as "starting from".
-   * Missing = a single package.
-   */
-  subPackages?: SubPackage[];
-}
-
-/** One priced option inside a group package, e.g. "الأساسية" / "المتقدمة" */
-export interface SubPackage {
-  id: string;
-  title: string;
-  /** Optional ribbon, e.g. "الأكثر طلبًا" */
-  badge: string;
-  price: string;
-  oldPrice: string;
-  description: string;
-  /** What this option includes on top of the group's shared list */
-  includes: string[];
-  /** Highlighted as the recommended option */
-  featured: boolean;
-  /** Optional photo at the top of the option's card */
   image?: string;
 }
 
