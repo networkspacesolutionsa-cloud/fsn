@@ -21,55 +21,7 @@ interface Review {
   date: string;
   rating: number;
   comment: string;
-  verified?: boolean;
 }
-
-const DEFAULT_REVIEWS: Review[] = [
-  {
-    id: 'r1',
-    name: 'عبدالله السبيعي',
-    location: 'الرياض - حي النرجس',
-    service: 'تمديد شبكة كابلات + تقوية واي فاي',
-    date: 'منذ أسبوعين',
-    rating: 5,
-    comment:
-      'تعامل احترافي وراقي جداً. تم التمديد في فيلا 3 أدوار بدون أي أسلاك ظاهرة، وشبكة الواي فاي الآن فل في كل الغرف والحوش. أعجبني وضوح التكلفة من البداية بدون أي زيادات.',
-    verified: true,
-  },
-  {
-    id: 'r2',
-    name: 'م. فهد الغامدي',
-    location: 'الرياض - حي حطين',
-    service: 'تركيب 8 كاميرات مراقبة 4K',
-    date: 'منذ شهر',
-    rating: 5,
-    comment:
-      'الفني جاء في الموعد بالضبط وعاين الموقع وحدد أماكن الكاميرات والزوايا بعناية فائقة. الصورة واضحة جداً في الليل والنهار وتطبيق الجوال سريع وممتاز.',
-    verified: true,
-  },
-  {
-    id: 'r3',
-    name: 'خالد بن ناصر العتيبي',
-    location: 'الرياض - حي الياسمين',
-    service: 'تركيب وبرمجة إنتركوم ذكي',
-    date: 'منذ 3 أسابيع',
-    rating: 5,
-    comment:
-      'خدمة ممتازة، تم ربط شاشة الإنتركوم مع الجوال لجميع أفراد الأسرة، والآن أستطيع فتح البوابة والرد على الزوار حتى وأنا خارج المنزل. شكراً لفريق فضاء الشبكات.',
-    verified: true,
-  },
-  {
-    id: 'r4',
-    name: 'سلطان القحطاني',
-    location: 'الرياض - حي الملقا',
-    service: 'تغطية المنزل بالإنترنت ومقويات الشبكة',
-    date: 'منذ 4 أيام',
-    rating: 5,
-    comment:
-      'كانت الفيلا تعاني من ضعف شديد في الدور الثاني والملحق بسبب العوازل. ركبوا مقويات شبكة متصلة بسلاسة، والسرعة كاملة 500 ميجا في كل مكان.',
-    verified: true,
-  },
-];
 
 interface ReviewRow {
   id: string;
@@ -102,7 +54,6 @@ const fromRow = (row: ReviewRow): Review => ({
   date: relativeDate(row.created_at),
   rating: row.rating,
   comment: row.comment,
-  verified: true,
 });
 
 export const ReviewsSection: React.FC = () => {
@@ -117,7 +68,7 @@ export const ReviewsSection: React.FC = () => {
     } catch {
       // ignore
     }
-    return DEFAULT_REVIEWS;
+    return [];
   });
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -139,8 +90,15 @@ export const ReviewsSection: React.FC = () => {
       .eq('approved', true)
       .order('created_at', { ascending: false })
       .then(({ data, error }) => {
-        setReviews(error || !data ? DEFAULT_REVIEWS : data.map(fromRow));
+        setReviews(error || !data ? [] : data.map(fromRow));
       });
+  }, []);
+
+  // Review-request link sent to customers after a job: /?review opens the form directly
+  useEffect(() => {
+    if (!new URLSearchParams(window.location.search).has('review')) return;
+    document.getElementById('reviews')?.scrollIntoView();
+    setModalOpen(true);
   }, []);
 
   // Without Supabase, reviews are kept in this browser only
@@ -189,7 +147,6 @@ export const ReviewsSection: React.FC = () => {
       date: 'الآن',
       rating: newRating,
       comment: comment.trim(),
-      verified: true,
     };
 
     setReviews([newReview, ...reviews]);
@@ -204,10 +161,8 @@ export const ReviewsSection: React.FC = () => {
     }, 6000);
   };
 
-  // Calculate average rating
-  const avgRating = (
-    reviews.reduce((acc, curr) => acc + curr.rating, 0) / (reviews.length || 1)
-  ).toFixed(1);
+  const avg = reviews.reduce((acc, curr) => acc + curr.rating, 0) / (reviews.length || 1);
+  const avgRating = avg.toFixed(1);
 
   return (
     <section id="reviews" className="py-16 sm:py-24 bg-slate-50 dark:bg-slate-950 border-t border-slate-200/80 dark:border-slate-800 scroll-mt-20">
@@ -231,21 +186,28 @@ export const ReviewsSection: React.FC = () => {
 
           {/* Rating Summary & Action Bar */}
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200/90 dark:border-slate-800 shadow-sm max-w-xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-6">
-            <div className="flex items-center gap-4 text-right">
-              <div className="text-4xl font-black text-slate-900 dark:text-white font-mono">
-                {avgRating}
-              </div>
-              <div>
-                <div className="flex items-center gap-1 text-amber-400 mb-1">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-amber-400" />
-                  ))}
+            {reviews.length > 0 ? (
+              <div className="flex items-center gap-4 text-right">
+                <div className="text-4xl font-black text-slate-900 dark:text-white font-mono">
+                  {avgRating}
                 </div>
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                  بناءً على {reviews.length + 140} تقييم معتمد من العملاء
-                </span>
+                <div>
+                  <div className="flex items-center gap-1 text-amber-400 mb-1">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} className={`w-4 h-4 ${i < Math.round(avg) ? 'fill-amber-400' : 'text-slate-300'}`} />
+                    ))}
+                  </div>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                    {reviews.length === 1 ? 'تقييم واحد من عملائنا' : `بناءً على ${reviews.length} تقييمات من عملائنا`}
+                  </span>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="text-right">
+                <span className="block text-sm font-bold text-slate-900 dark:text-white">لا توجد تقييمات منشورة بعد</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">تعاملت معنا؟ كن أول من يشارك تجربته.</span>
+              </div>
+            )}
 
             {/* "أضف تقييمك" Button */}
             <button
@@ -304,10 +266,7 @@ export const ReviewsSection: React.FC = () => {
 
               <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                    <span>{rev.name}</span>
-                    <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-                  </h4>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">{rev.name}</h4>
                   <span className="text-[11px] text-slate-500 dark:text-slate-400">{rev.location}</span>
                 </div>
                 <span className="text-[10px] px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 font-semibold border border-blue-100 dark:border-blue-900/60">
@@ -464,7 +423,7 @@ export const ReviewsSection: React.FC = () => {
                     className="flex-[2] sm:flex-none px-6 py-3 sm:py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-md shadow-blue-600/30 flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
                   >
                     <Send className="w-4 h-4" />
-                    <span>نشر التقييم فوراً</span>
+                    <span>إرسال التقييم</span>
                   </button>
                 </div>
 

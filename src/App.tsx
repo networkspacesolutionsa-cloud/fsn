@@ -8,6 +8,7 @@ import { Navbar, TabKey } from './components/Navbar';
 import { HeroGraphic } from './components/HeroGraphic';
 import { ServicesSection } from './components/ServicesSection';
 import { GallerySection } from './components/GallerySection';
+import { LatestWorkSlider } from './components/LatestWorkSlider';
 import { PackagesSection } from './components/PackagesSection';
 import { WhyUsSection } from './components/WhyUsSection';
 import { OffersSection } from './components/OffersSection';
@@ -162,6 +163,9 @@ export default function App() {
             </div>
           </div>
         </section>
+
+        {/* Latest work slider: the newest gallery works right after the hero */}
+        <LatestWorkSlider onSelectBookingForWork={handleSelectWorkFromGallery} />
 
         {/* 3. Services Section ("خدماتنا" مع تفاصيل الشبكات، كاميرات المراقبة، الإنتركوم والأسعار) */}
         <ServicesSection onSelectService={handleSelectServiceFromCard} />

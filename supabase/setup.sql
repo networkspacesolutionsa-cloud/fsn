@@ -89,24 +89,6 @@ drop policy if exists "admins manage reviews" on public.reviews;
 create policy "admins manage reviews" on public.reviews
   for all using (public.is_admin()) with check (public.is_admin());
 
--- Start with the reviews that were already on the website (only if the table is empty)
-insert into public.reviews (name, location, service, rating, comment, approved, created_at)
-select * from (values
-  ('عبدالله السبيعي', 'الرياض - حي النرجس', 'تمديد شبكة كابلات + تقوية واي فاي', 5,
-   'تعامل احترافي وراقي جداً. تم التمديد في فيلا 3 أدوار بدون أي أسلاك ظاهرة، وشبكة الواي فاي الآن فل في كل الغرف والحوش. أعجبني وضوح التكلفة من البداية بدون أي زيادات.',
-   true, now() - interval '14 days'),
-  ('م. فهد الغامدي', 'الرياض - حي حطين', 'تركيب 8 كاميرات مراقبة 4K', 5,
-   'الفني جاء في الموعد بالضبط وعاين الموقع وحدد أماكن الكاميرات والزوايا بعناية فائقة. الصورة واضحة جداً في الليل والنهار وتطبيق الجوال سريع وممتاز.',
-   true, now() - interval '30 days'),
-  ('خالد بن ناصر العتيبي', 'الرياض - حي الياسمين', 'تركيب وبرمجة إنتركوم ذكي', 5,
-   'خدمة ممتازة، تم ربط شاشة الإنتركوم مع الجوال لجميع أفراد الأسرة، والآن أستطيع فتح البوابة والرد على الزوار حتى وأنا خارج المنزل. شكراً لفريق فضاء الشبكات.',
-   true, now() - interval '21 days'),
-  ('سلطان القحطاني', 'الرياض - حي الملقا', 'تغطية المنزل بالإنترنت ومقويات الشبكة', 5,
-   'كانت الفيلا تعاني من ضعف شديد في الدور الثاني والملحق بسبب العوازل. ركبوا مقويات شبكة متصلة بسلاسة، والسرعة كاملة 500 ميجا في كل مكان.',
-   true, now() - interval '4 days')
-) as seed(name, location, service, rating, comment, approved, created_at)
-where not exists (select 1 from public.reviews);
-
 -- ---------- Image storage for gallery / service photos ----------
 insert into storage.buckets (id, name, public)
 values ('site-images', 'site-images', true)

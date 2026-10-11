@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Eye, EyeOff, RefreshCw, Star, Trash2 } from 'lucide-react';
+import { Check, Copy, Eye, EyeOff, MessageCircle, RefreshCw, Star, Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Button, LoadingBlock, PanelHeader } from './ui';
 
@@ -13,6 +13,52 @@ interface ReviewRow {
   comment: string;
   approved: boolean;
 }
+
+// Link sent to a customer after a job; /?review opens the review form on the site
+const reviewLink = () => `${(import.meta.env.VITE_SITE_URL || window.location.origin).replace(/\/+$/, '')}/?review`;
+
+const reviewRequestMessage = () =>
+  `مرحباً، شكراً لاختيارك فضاء الشبكات FSN 🌟\nيسعدنا أن تشاركنا رأيك في الخدمة، لن يستغرق أكثر من دقيقة:\n${reviewLink()}`;
+
+const RequestReviewCard: React.FC = () => {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(reviewRequestMessage());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.prompt('انسخ الرسالة:', reviewRequestMessage());
+    }
+  };
+  return (
+    <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 sm:p-5 mb-5 flex flex-wrap items-center justify-between gap-3">
+      <div className="min-w-0">
+        <h3 className="text-sm font-black text-slate-900">اطلب تقييماً من عميل</h3>
+        <p className="text-xs text-slate-600 mt-1">
+          بعد انتهاء العمل أرسل للعميل هذا الرابط، يفتح نموذج التقييم مباشرة:{' '}
+          <span dir="ltr" className="font-mono text-blue-700 break-all">
+            {reviewLink()}
+          </span>
+        </p>
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <a
+          href={`https://wa.me/?text=${encodeURIComponent(reviewRequestMessage())}`}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm transition"
+        >
+          <MessageCircle className="w-4 h-4" /> إرسال عبر واتساب
+        </a>
+        <Button variant="secondary" onClick={copy}>
+          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+          {copied ? 'تم النسخ' : 'نسخ الرسالة'}
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 export const ReviewsPanel: React.FC<{ onPendingCount: (n: number) => void }> = ({ onPendingCount }) => {
   const [reviews, setReviews] = useState<ReviewRow[]>([]);
@@ -64,6 +110,8 @@ export const ReviewsPanel: React.FC<{ onPendingCount: (n: number) => void }> = (
           </Button>
         }
       />
+
+      <RequestReviewCard />
 
       <div className="flex flex-wrap gap-2 mb-4">
         {([
