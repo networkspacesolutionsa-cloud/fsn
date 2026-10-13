@@ -65,6 +65,8 @@ export interface GalleryItem {
   image?: string;
   /** Optional photo of the site before the work; with `image` it shows as a before/after slider */
   beforeImage?: string;
+  /** Label on the first photo of the slider; empty = "قبل" (e.g. "أثناء التركيب") */
+  beforeLabel?: string;
 }
 
 export interface HeroHighlight {

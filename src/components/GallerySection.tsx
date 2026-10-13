@@ -5,6 +5,9 @@ import { BeforeAfterSlider } from './BeforeAfterSlider';
 import { WorkDetailModal, hasCompare } from './WorkDetailModal';
 import type { GalleryItem } from '../content/types';
 
+// Cards shown before "عرض المزيد"
+const PAGE_SIZE = 8;
+
 interface GallerySectionProps {
   onSelectBookingForWork?: (workTitle: string) => void;
 }
@@ -12,6 +15,7 @@ interface GallerySectionProps {
 export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingForWork }) => {
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'beforeAfter' | GalleryItem['category']>('all');
   const [activeItem, setActiveItem] = useState<GalleryItem | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
   const { gallery: galleryItems } = useContent();
 
@@ -23,6 +27,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
       : selectedCategory === 'beforeAfter'
         ? galleryItems.filter(hasCompare)
         : galleryItems.filter((item) => item.category === selectedCategory);
+  const visibleItems = showAll ? filteredItems : filteredItems.slice(0, PAGE_SIZE);
 
   const handleBookWork = (work: GalleryItem) => {
     setActiveItem(null);
@@ -43,14 +48,14 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800/60 text-blue-700 dark:text-blue-300 text-xs font-bold mb-3">
             <ImageIcon className="w-3.5 h-3.5" />
-            <span>معرض الأعمال</span>
+            <span>من مواقع عملائنا</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
-            شاهد الفرق قبل وبعد التنفيذ
+            أعمال سابقة
           </h2>
           <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed">
-            نماذج من أعمال تمديد الشبكات، وتنظيم كبائن السيرفرات، وتركيب كاميرات المراقبة وأنظمة الإنتركوم. حرّك الشريط على
-            الصورة لتقارن حالة الموقع قبل التنفيذ وبعده.
+            صور من أعمال نفّذها فريقنا: تركيب كاميرات المراقبة، وتجهيز كبائن الشبكات وأجهزة التسجيل، وأنظمة الإنتركوم ونقاط
+            الواي فاي. وفي صور «قبل وبعد» حرّك الشريط لتقارن بين المرحلتين.
           </p>
         </div>
 
@@ -125,7 +130,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
 
         {/* Gallery Grid (swipeable carousel on phones) */}
         <div className="-mx-4 px-4 scroll-px-4 flex sm:grid sm:mx-0 sm:px-0 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible snap-x snap-mandatory scrollbar-none pb-2 sm:pb-0">
-          {filteredItems.map((item) => (
+          {visibleItems.map((item) => (
             <div
               key={item.id}
               onClick={() => setActiveItem(item)}
@@ -139,6 +144,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
                       before={item.beforeImage!}
                       after={item.image!}
                       alt={item.title}
+                      beforeLabel={item.beforeLabel || undefined}
                       mode="hover"
                       hint
                       lazy
@@ -225,6 +231,18 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
             </div>
           ))}
         </div>
+
+        {filteredItems.length > PAGE_SIZE && (
+          <div className="mt-8 sm:mt-10 text-center">
+            <button
+              type="button"
+              onClick={() => setShowAll((v) => !v)}
+              className="px-6 py-3 rounded-xl border border-blue-200 dark:border-blue-800/60 bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-sm font-bold transition cursor-pointer"
+            >
+              {showAll ? 'عرض أقل' : `عرض المزيد (${filteredItems.length - PAGE_SIZE})`}
+            </button>
+          </div>
+        )}
 
       </div>
 

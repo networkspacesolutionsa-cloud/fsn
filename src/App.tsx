@@ -122,7 +122,7 @@ export default function App() {
                     onClick={handleExploreServices}
                     className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 sm:px-7 py-3.5 rounded-xl whitespace-nowrap bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 font-bold text-sm sm:text-base shadow-xs transition-all duration-200 cursor-pointer hover:border-blue-400 group"
                   >
-                    <span>استكشف خدماتنا</span>
+                    <span>استكشف خدمات التركيب</span>
                     <ArrowLeft className="w-4 h-4 text-blue-600 dark:text-blue-400 transition-transform group-hover:-translate-x-1" />
                   </button>
                 </div>
@@ -167,10 +167,10 @@ export default function App() {
         {/* Latest work slider: the newest gallery works right after the hero */}
         <LatestWorkSlider onSelectBookingForWork={handleSelectWorkFromGallery} />
 
-        {/* 3. Services Section ("خدماتنا" مع تفاصيل الشبكات، كاميرات المراقبة، الإنتركوم والأسعار) */}
+        {/* 3. Services Section ("خدمات التركيب" مع تفاصيل الشبكات، كاميرات المراقبة، الإنتركوم والأسعار) */}
         <ServicesSection onSelectService={handleSelectServiceFromCard} />
 
-        {/* 4. Gallery Section ("معرض الصور والأعمال الميدانية") */}
+        {/* 4. Gallery Section ("أعمال سابقة") */}
         <GallerySection onSelectBookingForWork={handleSelectWorkFromGallery} />
 
         {/* 5. Packages Section ("الباقات - حلول متكاملة تناسب احتياجك") */}

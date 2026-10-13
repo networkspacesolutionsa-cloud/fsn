@@ -5,8 +5,12 @@ interface BeforeAfterSliderProps {
   before: string;
   after: string;
   alt: string;
+  beforeLabel?: string;
+  afterLabel?: string;
   /** 'drag' = grab the handle (lightbox); 'hover' = divider follows the mouse, taps pass through (cards) */
   mode?: 'drag' | 'hover';
+  /** 'contain' shows the whole photo (portrait phone shots) over a blurred copy instead of cropping */
+  fit?: 'cover' | 'contain';
   /** Sweep the divider once when it scrolls into view, so visitors notice it moves */
   hint?: boolean;
   /** Tailwind position classes for the قبل / بعد labels */
@@ -23,7 +27,10 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
   before,
   after,
   alt,
+  beforeLabel = 'قبل',
+  afterLabel = 'بعد',
   mode = 'drag',
+  fit = 'cover',
   hint = false,
   labelsClassName = 'top-3',
   lazy = false,
@@ -116,23 +123,33 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
         mode === 'drag' ? 'cursor-ew-resize touch-pan-y' : ''
       } ${className}`}
     >
+      {fit === 'contain' && (
+        <img
+          src={after}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-60 pointer-events-none"
+        />
+      )}
+
       {/* After: the full base layer */}
       <img
         src={after}
-        alt={`${alt} - بعد التنفيذ`}
+        alt={`${alt} - ${afterLabel}`}
         loading={lazy ? 'lazy' : undefined}
         draggable={false}
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        className={`absolute inset-0 w-full h-full ${fit === 'contain' ? 'object-contain' : 'object-cover'} pointer-events-none`}
       />
 
       {/* Before: clipped to the right of the divider */}
       <img
         src={before}
-        alt={`${alt} - قبل التنفيذ`}
+        alt={`${alt} - ${beforeLabel}`}
         loading={lazy ? 'lazy' : undefined}
         draggable={false}
         style={{ clipPath: `inset(0 0 0 ${pos}%)` }}
-        className={`absolute inset-0 w-full h-full object-cover pointer-events-none transition-[clip-path] ${ease}`}
+        className={`absolute inset-0 w-full h-full ${fit === 'contain' ? 'object-contain' : 'object-cover'} pointer-events-none transition-[clip-path] ${ease}`}
       />
 
       {/* Labels fade out once their side is nearly hidden */}
@@ -141,14 +158,14 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
           pos > 85 ? 'opacity-0' : 'opacity-100'
         }`}
       >
-        قبل
+        {beforeLabel}
       </span>
       <span
         className={`absolute left-3 ${labelsClassName} z-[5] px-2.5 py-1 rounded-full bg-blue-600/90 backdrop-blur-sm border border-white/25 text-[11px] font-black text-white shadow-md shadow-blue-900/40 pointer-events-none transition-opacity duration-300 ${
           pos < 15 ? 'opacity-0' : 'opacity-100'
         }`}
       >
-        بعد
+        {afterLabel}
       </span>
 
       {/* Divider + handle */}

@@ -58,6 +58,8 @@ export const WorkDetailModal: React.FC<WorkDetailModalProps> = ({ item, onClose,
                   before={item.beforeImage!}
                   after={item.image!}
                   alt={item.title}
+                  beforeLabel={item.beforeLabel || undefined}
+                  fit="contain"
                   hint
                   labelsClassName="top-14 sm:top-20"
                 />
@@ -65,7 +67,9 @@ export const WorkDetailModal: React.FC<WorkDetailModalProps> = ({ item, onClose,
               </>
             ) : item.image ? (
               <>
-                <img src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover" />
+                {/* Whole photo over a blurred copy, so portrait phone shots aren't cropped */}
+                <img src={item.image} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-60" />
+                <img src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-contain" />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 pointer-events-none" />
               </>
             ) : (

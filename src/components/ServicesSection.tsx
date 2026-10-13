@@ -150,7 +150,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800/60 text-blue-700 dark:text-blue-300 text-xs font-bold mb-3">
             <Zap className="w-3.5 h-3.5" />
-            <span>خدماتنا المتخصصة</span>
+            <span>خدمات التركيب</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
             خدمات فضاء الشبكات

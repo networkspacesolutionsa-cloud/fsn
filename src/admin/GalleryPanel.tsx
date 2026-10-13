@@ -53,8 +53,8 @@ export const GalleryPanel: React.FC = () => {
   return (
     <div>
       <PanelHeader
-        title="معرض الصور"
-        description="الأعمال التي تظهر في قسم «معرض الصور». الترتيب هنا هو ترتيب الظهور في الموقع."
+        title="أعمال سابقة"
+        description="الأعمال التي تظهر في قسم «أعمال سابقة». الترتيب هنا هو ترتيب الظهور في الموقع."
         actions={
           <Button onClick={addItem}>
             <Plus className="w-4 h-4" /> إضافة عمل
@@ -119,6 +119,15 @@ export const GalleryPanel: React.FC = () => {
                     onChange={(url) => set('beforeImage')(url)}
                     folder="gallery"
                   />
+                  {item.beforeImage && (
+                    <Field
+                      label="عنوان الصورة الأولى"
+                      value={item.beforeLabel ?? ''}
+                      onChange={set('beforeLabel')}
+                      placeholder="قبل"
+                      hint="يظهر على الصورة الأولى في المقارنة، مثل «أثناء التركيب». اتركه فارغاً ليظهر «قبل»."
+                    />
+                  )}
                   <p className="md:col-span-2 -mt-2 text-[11px] text-slate-500 leading-relaxed">
                     عند رفع الصورتين تظهر في الموقع كمقارنة «قبل وبعد» بشريط سحب. للحصول على أفضل نتيجة صوّر المكان من نفس الزاوية
                     والمسافة وبنفس اتجاه الجوال (عرضي أو طولي) في المرتين.

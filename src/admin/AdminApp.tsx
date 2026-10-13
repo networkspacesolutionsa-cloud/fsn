@@ -31,7 +31,7 @@ const TABS: { key: Tab; label: string; icon: React.ElementType }[] = [
   { key: 'reviews', label: 'التقييمات', icon: MessageSquareQuote },
   { key: 'hero', label: 'الصفحة الرئيسية', icon: Home },
   { key: 'services', label: 'الخدمات والأسعار', icon: Wrench },
-  { key: 'gallery', label: 'معرض الصور', icon: ImageIcon },
+  { key: 'gallery', label: 'أعمال سابقة', icon: ImageIcon },
   { key: 'packages', label: 'الباقات', icon: Package },
   { key: 'offers', label: 'عروض الأسعار', icon: BadgePercent },
   { key: 'contact', label: 'معلومات التواصل', icon: Phone },

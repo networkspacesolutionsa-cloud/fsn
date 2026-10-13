@@ -15,7 +15,7 @@ export const Footer: React.FC<FooterProps> = ({ onTabChange, onOpenBooking }) =>
     { id: 'networks', label: 'الشبكات', href: '#networks' },
     { id: 'cameras', label: 'كاميرات المراقبة', href: '#cameras' },
     { id: 'intercom', label: 'الإنتركوم', href: '#intercom' },
-    { id: 'gallery', label: 'معرض الصور', href: '#gallery' },
+    { id: 'gallery', label: 'أعمال سابقة', href: '#gallery' },
     { id: 'packages', label: 'الباقات', href: '#packages' },
     { id: 'offers', label: 'عروض الأسعار', href: '#offers' },
     { id: 'why-us', label: 'التقييمات', href: '#reviews' },

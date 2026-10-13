@@ -93,8 +93,8 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange, onOpenBo
 
   const navLinks: { id: TabKey; label: string; href: string }[] = [
     { id: 'home', label: 'الرئيسية', href: '#home' },
-    { id: 'services', label: 'خدماتنا', href: '#services' },
-    { id: 'gallery', label: 'معرض الصور', href: '#gallery' },
+    { id: 'services', label: 'خدمات التركيب', href: '#services' },
+    { id: 'gallery', label: 'أعمال سابقة', href: '#gallery' },
     { id: 'packages', label: 'الباقات', href: '#packages' },
     { id: 'why-us', label: 'لماذا FSN', href: '#why-us' },
     { id: 'offers', label: 'عروض الأسعار', href: '#offers' },

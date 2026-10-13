@@ -155,6 +155,7 @@ export const LatestWorkSlider: React.FC<LatestWorkSliderProps> = ({ onSelectBook
                           before={item.beforeImage!}
                           after={item.image!}
                           alt={item.title}
+                          beforeLabel={item.beforeLabel || undefined}
                           mode="hover"
                           hint
                           lazy={i > 0}

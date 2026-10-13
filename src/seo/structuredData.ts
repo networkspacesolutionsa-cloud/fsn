@@ -42,7 +42,7 @@ export const buildStructuredData = (content: SiteContent, siteUrl: string) => {
     },
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
-      name: 'خدماتنا',
+      name: 'خدمات التركيب',
       itemListElement: services.map((category) => ({
         '@type': 'OfferCatalog',
         name: category.cardTitle,
