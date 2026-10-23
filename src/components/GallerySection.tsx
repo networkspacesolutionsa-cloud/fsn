@@ -10,14 +10,18 @@ const PAGE_SIZE = 8;
 
 interface GallerySectionProps {
   onSelectBookingForWork?: (workTitle: string) => void;
+  /** Service pages: only these categories' works, without the category tabs */
+  only?: GalleryItem['category'][];
+  title?: string;
 }
 
-export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingForWork }) => {
+export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingForWork, only, title = 'أعمال سابقة' }) => {
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'beforeAfter' | GalleryItem['category']>('all');
   const [activeItem, setActiveItem] = useState<GalleryItem | null>(null);
   const [showAll, setShowAll] = useState(false);
 
-  const { gallery: galleryItems } = useContent();
+  const { gallery } = useContent();
+  const galleryItems = only ? gallery.filter((item) => only.includes(item.category)) : gallery;
 
   const compareCount = galleryItems.filter(hasCompare).length;
 
@@ -51,7 +55,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
             <span>من مواقع عملائنا</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
-            أعمال سابقة
+            {title}
           </h2>
           <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed">
             صور من أعمال نفّذها فريقنا: تركيب كاميرات المراقبة، وتجهيز كبائن الشبكات وأجهزة التسجيل، وأنظمة الإنتركوم ونقاط
@@ -60,73 +64,75 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
         </div>
 
         {/* Filter Tabs */}
-        <div className="-mx-4 px-4 sm:mx-0 sm:px-0 mb-8 sm:mb-12 overflow-x-auto scrollbar-none pb-2">
-          <div className="flex items-center gap-2 sm:gap-3 w-max mx-auto">
-            <button
-              onClick={() => setSelectedCategory('all')}
-              className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer whitespace-nowrap ${
-                selectedCategory === 'all'
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
-              }`}
-            >
-              جميع الصور ({galleryItems.length})
-            </button>
-            {compareCount > 0 && (
+        {!only && (
+          <div className="-mx-4 px-4 sm:mx-0 sm:px-0 mb-8 sm:mb-12 overflow-x-auto scrollbar-none pb-2">
+            <div className="flex items-center gap-2 sm:gap-3 w-max mx-auto">
               <button
-                onClick={() => setSelectedCategory('beforeAfter')}
-                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                  selectedCategory === 'beforeAfter'
+                onClick={() => setSelectedCategory('all')}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer whitespace-nowrap ${
+                  selectedCategory === 'all'
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                    : 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 hover:bg-blue-100 dark:hover:bg-blue-900/50'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
-                <SplitSquareHorizontal className="w-4 h-4" />
-                قبل وبعد ({compareCount})
+                جميع الصور ({galleryItems.length})
               </button>
-            )}
-            <button
-              onClick={() => setSelectedCategory('networks')}
-              className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer whitespace-nowrap ${
-                selectedCategory === 'networks'
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
-              }`}
-            >
-              الشبكات وكبائن السيرفرات
-            </button>
-            <button
-              onClick={() => setSelectedCategory('cameras')}
-              className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer whitespace-nowrap ${
-                selectedCategory === 'cameras'
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
-              }`}
-            >
-              كاميرات المراقبة 4K
-            </button>
-            <button
-              onClick={() => setSelectedCategory('intercom')}
-              className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer whitespace-nowrap ${
-                selectedCategory === 'intercom'
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
-              }`}
-            >
-              أنظمة الإنتركوم
-            </button>
-            <button
-              onClick={() => setSelectedCategory('wifi')}
-              className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer whitespace-nowrap ${
-                selectedCategory === 'wifi'
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
-              }`}
-            >
-              أفياش ونقاط الواي فاي
-            </button>
+              {compareCount > 0 && (
+                <button
+                  onClick={() => setSelectedCategory('beforeAfter')}
+                  className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                    selectedCategory === 'beforeAfter'
+                      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                      : 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 hover:bg-blue-100 dark:hover:bg-blue-900/50'
+                  }`}
+                >
+                  <SplitSquareHorizontal className="w-4 h-4" />
+                  قبل وبعد ({compareCount})
+                </button>
+              )}
+              <button
+                onClick={() => setSelectedCategory('networks')}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer whitespace-nowrap ${
+                  selectedCategory === 'networks'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
+                }`}
+              >
+                الشبكات وكبائن السيرفرات
+              </button>
+              <button
+                onClick={() => setSelectedCategory('cameras')}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer whitespace-nowrap ${
+                  selectedCategory === 'cameras'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
+                }`}
+              >
+                كاميرات المراقبة 4K
+              </button>
+              <button
+                onClick={() => setSelectedCategory('intercom')}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer whitespace-nowrap ${
+                  selectedCategory === 'intercom'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
+                }`}
+              >
+                أنظمة الإنتركوم
+              </button>
+              <button
+                onClick={() => setSelectedCategory('wifi')}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer whitespace-nowrap ${
+                  selectedCategory === 'wifi'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
+                }`}
+              >
+                أفياش ونقاط الواي فاي
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Gallery Grid (swipeable carousel on phones) */}
         <div className="-mx-4 px-4 scroll-px-4 flex sm:grid sm:mx-0 sm:px-0 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible snap-x snap-mandatory scrollbar-none pb-2 sm:pb-0">

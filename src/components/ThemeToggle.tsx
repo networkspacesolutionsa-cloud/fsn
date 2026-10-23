@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 
 const STORAGE_KEY = 'fsn-theme';
 
 export const ThemeToggle: React.FC<{ className?: string }> = ({ className = '' }) => {
   // index.html applies the saved theme before React loads; read it back from the <html> class
-  // (no document during the build-time prerender)
-  const [isDark, setIsDark] = useState(
-    () => typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
-  );
+  // after hydration (the prerendered page always has the light icon)
+  const [isDark, setIsDark] = useState(false);
+  useEffect(() => setIsDark(document.documentElement.classList.contains('dark')), []);
 
   const toggle = () => {
     const next = !isDark;

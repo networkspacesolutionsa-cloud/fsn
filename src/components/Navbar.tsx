@@ -7,6 +7,7 @@ import { MessageCircle, Menu, X, Phone, Calendar, ChevronLeft, ChevronDown, Netw
 import { useContent, whatsappUrl } from '../content/ContentContext';
 import type { CategoryKey } from '../content/types';
 import { showService } from './serviceNav';
+import { servicePath } from '../seo/pages';
 
 const CATEGORY_ICONS: Record<CategoryKey, React.ElementType> = { networks: Network, cameras: Video, intercom: Tv };
 
@@ -67,11 +68,18 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange, onOpenBo
     closeTimer.current = setTimeout(() => setServicesMenuOpen(false), 150);
   };
 
-  const goToService = (category: CategoryKey | 'all', itemId?: string) => {
-    onTabChange('services');
+  const closeMenus = () => {
     setServicesMenuOpen(false);
     setMobileMenuOpen(false);
-    showService(category, itemId);
+  };
+
+  // "All services": scroll on the home page, otherwise follow the link to /#services
+  const goToAllServices = (e: React.MouseEvent) => {
+    closeMenus();
+    if (!document.getElementById('service-details')) return;
+    e.preventDefault();
+    onTabChange('services');
+    showService('all');
   };
 
   useEffect(() => {
@@ -103,13 +111,15 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange, onOpenBo
     { id: 'contact', label: 'تواصل معنا', href: '#contact' },
   ];
 
-  const handleLinkClick = (tabId: TabKey, href: string) => {
-    onTabChange(tabId);
+  // Links point at the home page sections ("/#gallery") so they also work from the service pages;
+  // when the section is on this page, scroll to it instead of reloading
+  const handleLinkClick = (e: React.MouseEvent, tabId: TabKey, href: string) => {
     setMobileMenuOpen(false);
     const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (!element) return;
+    e.preventDefault();
+    onTabChange(tabId);
+    element.scrollIntoView({ behavior: 'smooth' });
   };
 
   const openWhatsApp = () => {
@@ -129,9 +139,9 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange, onOpenBo
         <div className="flex items-center justify-between gap-3 h-16 sm:h-20">
           
           {/* Right Zone (in RTL): Brand Logo */}
-          <div className="flex-shrink-0" onClick={() => handleLinkClick('home', '#home')}>
+          <a href="/" aria-label="فضاء الشبكات - الصفحة الرئيسية" className="flex-shrink-0" onClick={(e) => handleLinkClick(e, 'home', '#home')}>
             <Logo isDark={true} />
-          </div>
+          </a>
 
           {/* Center Zone: Navigation Links (Desktop) */}
           <nav className="hidden xl:flex items-center gap-6 2xl:gap-8 text-slate-200 text-sm font-medium">
@@ -169,8 +179,9 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange, onOpenBo
                               const Icon = CATEGORY_ICONS[category.key];
                               return (
                                 <div key={category.key} className="p-4">
-                                  <button
-                                    onClick={() => goToService(category.key)}
+                                  <a
+                                    href={servicePath(category.key)}
+                                    onClick={closeMenus}
                                     className="w-full flex items-center gap-2.5 mb-3 group cursor-pointer"
                                   >
                                     <span className="w-9 h-9 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0">
@@ -179,16 +190,17 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange, onOpenBo
                                     <span className="text-sm font-black text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                       {category.cardTitle}
                                     </span>
-                                  </button>
+                                  </a>
                                   <ul className="space-y-0.5">
                                     {category.items.map((item) => (
                                       <li key={item.id}>
-                                        <button
-                                          onClick={() => goToService(category.key, item.id)}
-                                          className="w-full text-right px-2 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-950/50 hover:text-blue-700 dark:hover:text-blue-300 transition-colors cursor-pointer leading-relaxed"
+                                        <a
+                                          href={`${servicePath(category.key)}#service-${item.id}`}
+                                          onClick={closeMenus}
+                                          className="block w-full text-right px-2 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-950/50 hover:text-blue-700 dark:hover:text-blue-300 transition-colors cursor-pointer leading-relaxed"
                                         >
                                           {item.title}
-                                        </button>
+                                        </a>
                                       </li>
                                     ))}
                                   </ul>
@@ -196,13 +208,14 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange, onOpenBo
                               );
                             })}
                           </div>
-                          <button
-                            onClick={() => goToService('all')}
+                          <a
+                            href="/#services"
+                            onClick={goToAllServices}
                             className="w-full flex items-center justify-center gap-2 py-3 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-100 dark:border-slate-800 text-xs font-bold text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors cursor-pointer"
                           >
                             <span>عرض جميع الخدمات والأسعار</span>
                             <ArrowLeft className="w-3.5 h-3.5" />
-                          </button>
+                          </a>
                         </div>
                       </div>
                     )}
@@ -210,9 +223,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange, onOpenBo
                 );
               }
               return (
-                <button
+                <a
                   key={link.id}
-                  onClick={() => handleLinkClick(link.id, link.href)}
+                  href={`/${link.href}`}
+                  onClick={(e) => handleLinkClick(e, link.id, link.href)}
                   className={`relative py-2 text-xs 2xl:text-sm font-semibold transition-colors duration-200 whitespace-nowrap cursor-pointer ${
                     isActive ? 'text-blue-400 font-bold' : 'text-slate-300 hover:text-white'
                   }`}
@@ -222,7 +236,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange, onOpenBo
                   {isActive && (
                     <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 rounded-full shadow-[0_0_8px_#0ea5e9]" />
                   )}
-                </button>
+                </a>
               );
             })}
           </nav>
@@ -324,32 +338,35 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange, onOpenBo
                             {services.map((category) => {
                               const Icon = CATEGORY_ICONS[category.key];
                               return (
-                                <button
+                                <a
                                   key={category.key}
-                                  onClick={() => goToService(category.key)}
+                                  href={servicePath(category.key)}
+                                  onClick={closeMenus}
                                   className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-right text-sm text-slate-300 hover:bg-slate-800/60 hover:text-white cursor-pointer"
                                 >
                                   <Icon className="w-4 h-4 text-blue-400 shrink-0" />
                                   <span className="flex-1">{category.cardTitle}</span>
                                   <span className="text-[11px] text-slate-500">{servicesCount(category.items.length)}</span>
-                                </button>
+                                </a>
                               );
                             })}
-                            <button
-                              onClick={() => goToService('all')}
+                            <a
+                              href="/#services"
+                              onClick={goToAllServices}
                               className="px-3 py-2 rounded-lg text-right text-xs font-bold text-blue-400 hover:bg-slate-800/60 cursor-pointer"
                             >
                               عرض جميع الخدمات والأسعار ←
-                            </button>
+                            </a>
                           </div>
                         )}
                       </div>
                     );
                   }
                   return (
-                    <button
+                    <a
                       key={link.id}
-                      onClick={() => handleLinkClick(link.id, link.href)}
+                      href={`/${link.href}`}
+                      onClick={(e) => handleLinkClick(e, link.id, link.href)}
                       className={`flex items-center justify-between px-3.5 py-2.5 rounded-lg text-right font-medium text-sm transition-colors cursor-pointer ${
                         isActive
                           ? 'bg-blue-600/20 text-blue-400 font-bold border-r-4 border-blue-500'
@@ -358,7 +375,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange, onOpenBo
                     >
                       <span>{link.label}</span>
                       <ChevronLeft className="w-4 h-4 text-slate-500" />
-                    </button>
+                    </a>
                   );
                 })}
 

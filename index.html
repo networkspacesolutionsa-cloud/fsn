@@ -13,15 +13,11 @@
       } catch (e) {}
     </script>
     <meta name="theme-color" content="#0b1a30" />
+    <!-- page-seo: replaced per page by scripts/prerender.mjs -->
     <title>فضاء الشبكات FSN | تمديد شبكات وكاميرات مراقبة وإنتركوم في الرياض</title>
     <meta name="description" content="مؤسسة فضاء الشبكات الأمنية في الرياض: تمديد وصيانة الشبكات والألياف الضوئية، تركيب كاميرات المراقبة وأنظمة الإنتركوم وتقوية Wi-Fi للمنازل والشركات. معاينة مجانية وضمان معتمد." />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="canonical" href="%VITE_SITE_URL%/" />
-    <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/site.webmanifest" />
-
     <!-- Link previews (WhatsApp, X, Facebook, LinkedIn, Telegram) -->
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ar_SA" />
@@ -37,13 +33,20 @@
     <meta name="twitter:title" content="فضاء الشبكات FSN | تمديد شبكات وكاميرات مراقبة وإنتركوم في الرياض" />
     <meta name="twitter:description" content="حلول احترافية للشبكات والأنظمة الأمنية للمنازل والشركات: كاميرات مراقبة، تمديد وصيانة الشبكات، أنظمة الإنتركوم وتقوية Wi-Fi." />
     <meta name="twitter:image" content="%VITE_SITE_URL%/og-image.jpg" />
+    <!-- /page-seo -->
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <!-- Local business signals -->
     <meta name="geo.region" content="SA-01" />
     <meta name="geo.placename" content="الرياض" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Work photos and uploaded images are served from Supabase storage -->
+    <link rel="preconnect" href="%VITE_SUPABASE_URL%" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400..900&display=swap" rel="stylesheet" />
   </head>
   <body class="bg-slate-50 text-slate-800 antialiased selection:bg-blue-600 selection:text-white">
     <div id="root"></div>

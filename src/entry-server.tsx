@@ -1,15 +1,16 @@
-// Build-time prerender entry (scripts/prerender.mjs): renders the home page to static HTML
+// Build-time prerender entry (scripts/prerender.mjs): renders each public page to static HTML
 // so search engines and link previews see the full content without running JavaScript.
 import { renderToString } from 'react-dom/server';
-import App from './App';
 import { ContentProvider, mergeContent } from './content/ContentContext';
-import { buildStructuredData } from './seo/structuredData';
+import { SitePage } from './pages/SitePage';
+import { SERVICE_GALLERY, Route, servicePath } from './seo/pages';
+import { canonicalPath, renderHead } from './seo/head';
 
-export { mergeContent, buildStructuredData };
+export { mergeContent, renderHead, canonicalPath, servicePath, SERVICE_GALLERY };
 
-export const render = (rows: { key: string; data: unknown }[]) =>
+export const render = (rows: { key: string; data: unknown }[], route: Route) =>
   renderToString(
     <ContentProvider initialContent={mergeContent(rows)}>
-      <App />
+      <SitePage route={route} />
     </ContentProvider>
   );

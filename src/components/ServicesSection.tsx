@@ -4,6 +4,7 @@ import { useContent } from '../content/ContentContext';
 import type { CategoryKey, ServiceCategory, ServiceItem } from '../content/types';
 import { RichText } from './RichText';
 import { SHOW_SERVICE_EVENT, ShowServiceDetail } from './serviceNav';
+import { servicePath } from '../seo/pages';
 
 interface ServicesSectionProps {
   onSelectService: (serviceName: string, category: string) => void;
@@ -19,66 +20,71 @@ const CATEGORY_ICONS: Record<CategoryKey, React.ElementType> = {
 const imagePosition = (category: ServiceCategory) =>
   category.cardImage === '/images/cctv-camera-white.webp' ? 'object-[center_35%]' : '';
 
-const ServiceCard: React.FC<{
+export const ServiceCard: React.FC<{
   item: ServiceItem;
   category: ServiceCategory;
   onSelect: ServicesSectionProps['onSelectService'];
-  highlighted: boolean;
-}> = ({ item, category, onSelect, highlighted }) => (
-  <div
-    id={`service-${item.id}`}
-    className={`scroll-mt-28 bg-white dark:bg-slate-900 sm:bg-slate-50/80 dark:sm:bg-slate-800/40 rounded-2xl p-5 sm:p-6 border border-slate-200/70 dark:border-slate-800 shadow-sm sm:shadow-none flex flex-col justify-between text-right transition-shadow duration-500 ${
-      highlighted ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-50 dark:ring-offset-slate-950' : ''
-    }`}
-  >
-    <div>
-      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 mb-3">
-        {item.badge && (
-          <span
+  highlighted?: boolean;
+  /** h4 under the home page's category headings, h3 on a service page */
+  headingLevel?: 3 | 4;
+}> = ({ item, category, onSelect, highlighted = false, headingLevel = 4 }) => {
+  const Heading = headingLevel === 3 ? 'h3' : 'h4';
+  return (
+    <div
+      id={`service-${item.id}`}
+      className={`scroll-mt-28 target:ring-2 target:ring-blue-500 target:ring-offset-2 target:ring-offset-slate-50 dark:target:ring-offset-slate-950 bg-white dark:bg-slate-900 sm:bg-slate-50/80 dark:sm:bg-slate-800/40 rounded-2xl p-5 sm:p-6 border border-slate-200/70 dark:border-slate-800 shadow-sm sm:shadow-none flex flex-col justify-between text-right transition-shadow duration-500 ${
+        highlighted ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-50 dark:ring-offset-slate-950' : ''
+      }`}
+    >
+      <div>
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 mb-3">
+          {item.badge && (
+            <span
+              className={
+                item.badgeTone === 'price'
+                  ? 'px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 text-xs font-bold font-mono'
+                  : 'px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 text-xs font-bold'
+              }
+            >
+              {item.badge}
+            </span>
+          )}
+          {item.sideNote && <span className="text-xs text-slate-500 dark:text-slate-400">{item.sideNote}</span>}
+        </div>
+        <Heading className="text-lg font-bold text-blue-700 dark:text-blue-400 mb-2">
+          <RichText text={item.title} />
+        </Heading>
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
+          <RichText text={item.description} />
+        </p>
+        {(item.details || item.detailsNote) && (
+          <div
             className={
-              item.badgeTone === 'price'
-                ? 'px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 text-xs font-bold font-mono'
-                : 'px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 text-xs font-bold'
+              item.detailsTone === 'info'
+                ? 'bg-blue-50/70 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/60 rounded-xl p-3 text-xs text-blue-900 dark:text-blue-200 mb-5 leading-relaxed space-y-1'
+                : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-xs text-slate-700 dark:text-slate-200 mb-5 leading-relaxed space-y-1'
             }
           >
-            {item.badge}
-          </span>
+            {item.details && (
+              <RichText
+                text={item.details}
+                boldClass={item.detailsTone === 'info' ? 'text-blue-950 dark:text-blue-100' : 'text-slate-900 dark:text-white'}
+              />
+            )}
+            {item.detailsNote && <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">{item.detailsNote}</p>}
+          </div>
         )}
-        {item.sideNote && <span className="text-xs text-slate-500 dark:text-slate-400">{item.sideNote}</span>}
       </div>
-      <h4 className="text-lg font-bold text-blue-700 dark:text-blue-400 mb-2">
-        <RichText text={item.title} />
-      </h4>
-      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
-        <RichText text={item.description} />
-      </p>
-      {(item.details || item.detailsNote) && (
-        <div
-          className={
-            item.detailsTone === 'info'
-              ? 'bg-blue-50/70 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/60 rounded-xl p-3 text-xs text-blue-900 dark:text-blue-200 mb-5 leading-relaxed space-y-1'
-              : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-xs text-slate-700 dark:text-slate-200 mb-5 leading-relaxed space-y-1'
-          }
-        >
-          {item.details && (
-            <RichText
-              text={item.details}
-              boldClass={item.detailsTone === 'info' ? 'text-blue-950 dark:text-blue-100' : 'text-slate-900 dark:text-white'}
-            />
-          )}
-          {item.detailsNote && <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">{item.detailsNote}</p>}
-        </div>
-      )}
+      <button
+        type="button"
+        onClick={() => onSelect(item.title, category.name)}
+        className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-sm transition cursor-pointer"
+      >
+        {item.buttonLabel || 'احجز الخدمة'}
+      </button>
     </div>
-    <button
-      type="button"
-      onClick={() => onSelect(item.title, category.name)}
-      className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow-sm transition cursor-pointer"
-    >
-      {item.buttonLabel || 'احجز الخدمة'}
-    </button>
-  </div>
-);
+  );
+};
 
 export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectService }) => {
   const { services } = useContent();
@@ -182,23 +188,22 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 </div>
                 <div className="p-6 md:p-5 lg:p-6 pt-8 md:pt-8 lg:pt-8 flex-1 flex flex-col justify-between text-right">
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{category.cardTitle}</h3>
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
+                      <a href={servicePath(category.key)} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                        {category.cardTitle}
+                      </a>
+                    </h3>
                     <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
                       <RichText text={category.cardDescription} />
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveCategory(category.key);
-                      const el = document.getElementById(category.key);
-                      if (el) el.scrollIntoView({ behavior: 'smooth' });
-                    }}
+                  <a
+                    href={servicePath(category.key)}
                     className="inline-flex items-center gap-2 text-xs sm:text-sm md:text-xs lg:text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition cursor-pointer self-start whitespace-nowrap group"
                   >
                     <span>{category.cardLinkLabel}</span>
                     <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-                  </button>
+                  </a>
                 </div>
               </div>
             );

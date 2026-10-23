@@ -19,14 +19,15 @@ import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
 import { TrustBanner } from './components/TrustBanner';
 import { Footer } from './components/Footer';
-import { Calendar, ArrowLeft, MessageCircle, CheckCircle2 } from 'lucide-react';
-import { useContent, whatsappUrl } from './content/ContentContext';
+import { FloatingWhatsApp } from './components/FloatingWhatsApp';
+import { Calendar, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { useContent } from './content/ContentContext';
 
 // Hero highlight chips use the logo's brand blue
 const HIGHLIGHT_TONE = 'border-blue-200 dark:border-blue-800/60 [&>svg]:text-blue-600 dark:[&>svg]:text-blue-400';
 
 export default function App() {
-  const { contact, hero } = useContent();
+  const { hero } = useContent();
   const [activeTab, setActiveTab] = useState<TabKey>('home');
   const [preselectedService, setPreselectedService] = useState<string>('');
   const [preselectedCategory, setPreselectedCategory] = useState<string>('');
@@ -64,13 +65,6 @@ export default function App() {
     if (bookingElement) {
       bookingElement.scrollIntoView({ behavior: 'smooth' });
     }
-  };
-
-  const openWhatsApp = () => {
-    window.open(
-      whatsappUrl(contact, 'السلام عليكم، أود حجز موعد استشارة ومعاينة لدى FSN | فضاء الشبكات'),
-      '_blank'
-    );
   };
 
   return (
@@ -152,6 +146,7 @@ export default function App() {
                     <img
                       src={hero.image}
                       alt={`${hero.titleLine1} ${hero.titleLine2}`}
+                      fetchPriority="high"
                       className="w-full aspect-[16/11] object-cover rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-2xl"
                     />
                   </div>
@@ -208,16 +203,7 @@ export default function App() {
       <Footer onTabChange={handleTabChange} onOpenBooking={handleOpenBooking} />
 
       {/* Floating Instant WhatsApp Button */}
-      <div className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-40">
-        <button
-          onClick={openWhatsApp}
-          title="محادثة واتساب سريعة مع فضاء الشبكات"
-          aria-label="واتساب"
-          className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white flex items-center justify-center shadow-xl shadow-emerald-500/40 hover:scale-110 transition-all duration-200 cursor-pointer"
-        >
-          <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7" />
-        </button>
-      </div>
+      <FloatingWhatsApp />
     </div>
   );
 }

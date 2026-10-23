@@ -3,6 +3,7 @@ import { Logo } from './Logo';
 import { Phone, Mail, MapPin, MessageCircle, ChevronLeft } from 'lucide-react';
 import { TabKey } from './Navbar';
 import { useContent, whatsappUrl, telUrl } from '../content/ContentContext';
+import { servicePath } from '../seo/pages';
 
 interface FooterProps {
   onTabChange: (tab: TabKey) => void;
@@ -12,9 +13,9 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({ onTabChange, onOpenBooking }) => {
   const { contact } = useContent();
   const links: { id: TabKey; label: string; href: string }[] = [
-    { id: 'networks', label: 'الشبكات', href: '#networks' },
-    { id: 'cameras', label: 'كاميرات المراقبة', href: '#cameras' },
-    { id: 'intercom', label: 'الإنتركوم', href: '#intercom' },
+    { id: 'networks', label: 'الشبكات', href: servicePath('networks') },
+    { id: 'cameras', label: 'كاميرات المراقبة', href: servicePath('cameras') },
+    { id: 'intercom', label: 'الإنتركوم', href: servicePath('intercom') },
     { id: 'gallery', label: 'أعمال سابقة', href: '#gallery' },
     { id: 'packages', label: 'الباقات', href: '#packages' },
     { id: 'offers', label: 'عروض الأسعار', href: '#offers' },
@@ -24,12 +25,13 @@ export const Footer: React.FC<FooterProps> = ({ onTabChange, onOpenBooking }) =>
     { id: 'contact', label: 'التواصل معنا', href: '#contact' },
   ];
 
-  const handleLink = (id: TabKey, href: string) => {
+  // Section links scroll when the section is on this page, otherwise open the home page at it
+  const handleLink = (e: React.MouseEvent, id: TabKey, href: string) => {
+    const element = href.startsWith('#') ? document.querySelector(href) : null;
+    if (!element) return;
+    e.preventDefault();
     onTabChange(id);
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    element.scrollIntoView({ behavior: 'smooth' });
   };
 
   const openWhatsApp = () => {
@@ -102,14 +104,15 @@ export const Footer: React.FC<FooterProps> = ({ onTabChange, onOpenBooking }) =>
             </h4>
             <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm">
               {links.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => handleLink(item.id, item.href)}
+                <a
+                  key={item.href}
+                  href={item.href.startsWith('#') ? `/${item.href}` : item.href}
+                  onClick={(e) => handleLink(e, item.id, item.href)}
                   className="text-right hover:text-blue-400 transition-colors flex items-center gap-1.5 py-1 cursor-pointer"
                 >
                   <ChevronLeft className="w-3 h-3 text-slate-600" />
                   <span>{item.label}</span>
-                </button>
+                </a>
               ))}
             </div>
           </div>

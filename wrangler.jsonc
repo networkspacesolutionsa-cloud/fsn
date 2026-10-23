@@ -5,9 +5,10 @@
   "compatibility_date": "2026-09-01",
   "assets": {
     "directory": "./dist",
-    // Serve index.html for unknown paths so client-side routes work
-    "not_found_handling": "single-page-application",
-    // Serve files like google….html at their exact URL (no redirect to the .html-less path)
-    "html_handling": "none"
+    // Every page is prerendered (scripts/prerender.mjs): unknown paths get dist/404.html with a 404 status
+    "not_found_handling": "404-page",
+    // Clean URLs: /services/cctv-cameras/ serves dist/services/cctv-cameras/index.html.
+    // The Google verification file keeps its exact .html URL through public/_redirects.
+    "html_handling": "auto-trailing-slash"
   }
 }

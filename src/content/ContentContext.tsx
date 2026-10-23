@@ -43,12 +43,17 @@ export const ContentProvider: React.FC<{ children: React.ReactNode; initialConte
   children,
   initialContent,
 }) => {
-  // Last-seen content from this browser first, so returning visitors don't see old prices flash
+  // Start from the content baked into the prerendered page so hydration matches its HTML
   const [content, setContent] = useState<SiteContent>(
-    () => initialContent ?? readCache() ?? readEmbedded() ?? DEFAULT_CONTENT
+    () => initialContent ?? readEmbedded() ?? readCache() ?? DEFAULT_CONTENT
   );
 
   useEffect(() => {
+    // Then last-seen content from this browser, so returning visitors don't wait for old prices to update
+    if (!initialContent && readEmbedded()) {
+      const cached = readCache();
+      if (cached) setContent(cached);
+    }
     if (!supabase) return;
     let cancelled = false;
     supabase
