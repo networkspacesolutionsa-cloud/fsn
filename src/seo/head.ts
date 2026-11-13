@@ -8,7 +8,7 @@ const escapeAttr = (value: string) =>
 // Keep "</script>" inside JSON from closing the tag early
 const safeJson = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
 
-/** Path of the page, or null when it must not be indexed (404, control panel) */
+/** Path of the page, or null when it must not be indexed (404, control panel, payment links) */
 export const canonicalPath = (route: Route) =>
   route.page === 'home' ? '/' : route.page === 'service' ? servicePath(route.category) : null;
 
@@ -21,6 +21,8 @@ export const renderHead = (route: Route, content: SiteContent, siteUrl: string) 
         ? SERVICE_SEO[route.category]
         : route.page === 'admin'
           ? { title: `لوحة التحكم | ${BRAND_NAME}`, description: '' }
+          : route.page === 'pay'
+            ? { title: `الدفع عبر تمارا | ${BRAND_NAME}`, description: '' }
           : NOT_FOUND_SEO;
   const path = canonicalPath(route);
   const tags = [`<title>${escapeAttr(seo.title)}</title>`];

@@ -21,6 +21,11 @@ export interface ServiceItem {
   badge: string;
   /** 'price' = green monospace pill, 'info' = blue pill */
   badgeTone: 'price' | 'info';
+  /**
+   * Price customers can pay online with Tamara when booking (SAR). Unset = taken from a badge that is
+   * exactly "150 ريال"; 0 = no online payment for this service. See onlinePriceOf().
+   */
+  onlinePrice?: number | null;
   /** Small grey text next to the badge */
   sideNote: string;
   description: string;

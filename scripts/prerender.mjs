@@ -64,10 +64,12 @@ await write(
   'dist/admin/index.html',
   template.replace(SEO_BLOCK, renderHead({ page: 'admin' }, content, siteUrl))
 );
+// Tamara payment links (/pay/?id=...) also render in the browser only
+await write('dist/pay/index.html', template.replace(SEO_BLOCK, renderHead({ page: 'pay' }, content, siteUrl)));
 
 await writeFile(
   'dist/robots.txt',
-  `User-agent: *\nAllow: /\nDisallow: /admin\n\nSitemap: ${siteUrl}/sitemap.xml\n`
+  `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /pay\n\nSitemap: ${siteUrl}/sitemap.xml\n`
 );
 
 // Sitemap with each page's photos, so the work photos can show up in Google Images

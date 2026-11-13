@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Copy, MapPin, Phone, RefreshCw, Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Button, LoadingBlock, PanelHeader } from './ui';
+import { BookingPayments } from './BookingPayments';
+import type { Payment } from '../lib/tamara';
 
 export interface Booking {
   id: string;
@@ -32,6 +34,7 @@ const formatDate = (iso: string) =>
 
 export const BookingsPanel: React.FC<{ onNewCount: (n: number) => void }> = ({ onNewCount }) => {
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState<'all' | BookingStatus>('all');
@@ -45,6 +48,9 @@ export const BookingsPanel: React.FC<{ onNewCount: (n: number) => void }> = ({ o
       .limit(500);
     if (error) setError(error.message);
     else setBookings(data as Booking[]);
+    // Tamara payments (supabase/tamara.sql); the panel still works if that table isn't set up yet
+    const pay = await supabase!.from('payments').select('*').order('created_at', { ascending: false }).limit(1000);
+    if (!pay.error) setPayments(pay.data as Payment[]);
     setLoading(false);
   };
 
@@ -68,6 +74,9 @@ export const BookingsPanel: React.FC<{ onNewCount: (n: number) => void }> = ({ o
     if (error) return alert('تعذر الحذف: ' + error.message);
     setBookings((list) => list.filter((x) => x.id !== b.id));
   };
+
+  const savePayment = (payment: Payment) =>
+    setPayments((list) => [payment, ...list.filter((p) => p.id !== payment.id)]);
 
   const visible = filter === 'all' ? bookings : bookings.filter((b) => b.status === filter);
   const count = (s: BookingStatus) => bookings.filter((b) => b.status === s).length;
@@ -117,9 +126,14 @@ export const BookingsPanel: React.FC<{ onNewCount: (n: number) => void }> = ({ o
                     {formatDate(b.created_at)} {b.ref && <span className="font-mono">· {b.ref}</span>}
                   </p>
                 </div>
-                <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${STATUS[b.status].className}`}>
-                  {STATUS[b.status].label}
-                </span>
+                <div className="flex items-center gap-1.5">
+                  {payments.some((p) => p.booking_id === b.id && p.status === 'paid') && (
+                    <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-600 text-white">مدفوع عبر تمارا</span>
+                  )}
+                  <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${STATUS[b.status].className}`}>
+                    {STATUS[b.status].label}
+                  </span>
+                </div>
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
@@ -164,6 +178,12 @@ export const BookingsPanel: React.FC<{ onNewCount: (n: number) => void }> = ({ o
                 )}
               </dl>
               {b.notes && <p className="text-xs text-slate-700 leading-relaxed bg-amber-50/60 border border-amber-100 rounded-xl p-3">{b.notes}</p>}
+
+              <BookingPayments
+                booking={b}
+                payments={payments.filter((p) => p.booking_id === b.id)}
+                onChange={savePayment}
+              />
 
               <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
                 <label className="flex items-center gap-2 text-xs font-bold text-slate-600">

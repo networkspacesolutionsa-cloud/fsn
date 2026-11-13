@@ -21,12 +21,14 @@ export type Route =
   | { page: 'home' }
   | { page: 'service'; category: CategoryKey }
   | { page: 'admin' }
+  | { page: 'pay' }
   | { page: 'not-found' };
 
 export const matchRoute = (pathname: string): Route => {
   const path = pathname.replace(/\/index\.html$/, '/').replace(/\/+$/, '') || '/';
   if (path === '/') return { page: 'home' };
   if (path === '/admin') return { page: 'admin' };
+  if (path === '/pay') return { page: 'pay' };
   const category = (Object.keys(SERVICE_SLUGS) as CategoryKey[]).find((key) => `${path}/` === servicePath(key));
   return category ? { page: 'service', category } : { page: 'not-found' };
 };

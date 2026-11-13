@@ -6,6 +6,7 @@ import { matchRoute } from './seo/pages';
 import './index.css';
 
 const AdminApp = lazy(() => import('./admin/AdminApp'));
+const PayPage = lazy(() => import('./pages/PayPage'));
 const route = matchRoute(window.location.pathname);
 const root = document.getElementById('root')!;
 
@@ -18,6 +19,15 @@ if (route.page === 'admin') {
     <Suspense fallback={null}>
       <AdminApp />
     </Suspense>
+  );
+} else if (route.page === 'pay') {
+  // Payment links (/pay/?id=...) depend on the query string, so they render in the browser only
+  createRoot(root).render(
+    <ContentProvider>
+      <Suspense fallback={null}>
+        <PayPage />
+      </Suspense>
+    </ContentProvider>
   );
 } else {
   const page = (

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronDown, Plus } from 'lucide-react';
 import type { CategoryKey, ServiceCategory, ServiceItem } from '../content/types';
+import { onlinePriceOf } from '../content/pricing';
 import {
   Button,
   Card,
@@ -21,6 +22,7 @@ const FORMAT_HINT = 'للتنسيق: **نص** = عريض، !!نص!! = عريض �
 
 const ItemEditor: React.FC<{ item: ServiceItem; onChange: (item: ServiceItem) => void }> = ({ item, onChange }) => {
   const set = <F extends keyof ServiceItem>(field: F) => (v: ServiceItem[F]) => onChange({ ...item, [field]: v });
+  const autoPrice = onlinePriceOf({ ...item, onlinePrice: null });
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div className="md:col-span-2">
@@ -36,6 +38,28 @@ const ItemEditor: React.FC<{ item: ServiceItem; onChange: (item: ServiceItem) =>
           { value: 'info', label: 'أزرق (معلومة)' },
         ]}
       />
+      <div className="md:col-span-2">
+        <Field
+          label="سعر الدفع عبر تمارا عند الحجز (ريال، اختياري)"
+          type="number"
+          dir="ltr"
+          value={typeof item.onlinePrice === 'number' ? String(item.onlinePrice) : ''}
+          onChange={(v) => {
+            const n = Number(v);
+            set('onlinePrice')(v.trim() === '' || !Number.isFinite(n) ? null : Math.max(0, Math.round(n * 100) / 100));
+          }}
+          placeholder={autoPrice ? String(autoPrice) : 'لا يوجد دفع إلكتروني'}
+          hint={
+            typeof item.onlinePrice === 'number'
+              ? item.onlinePrice >= 1
+                ? `العميل يستطيع الدفع ${item.onlinePrice} ريال بالتقسيط عند الحجز. اكتب 0 لإيقافه، أو امسح الحقل ليُؤخذ السعر من الشارة.`
+                : 'الدفع الإلكتروني متوقف لهذه الخدمة.'
+              : autoPrice
+                ? `فارغ = يُؤخذ من الشارة: الدفع ${autoPrice} ريال متاح عند الحجز. اكتب 0 لإيقافه.`
+                : 'فارغ = لا دفع إلكتروني (الشارة ليست سعرًا ثابتًا). اكتب سعرًا لتفعيله.'
+          }
+        />
+      </div>
       <Field label="ملاحظة بجانب الشارة" value={item.sideNote} onChange={set('sideNote')} placeholder="ضمان 3 أشهر" />
       <Field label="نص الزر" value={item.buttonLabel} onChange={set('buttonLabel')} placeholder="احجز الخدمة" />
       <div className="md:col-span-2">

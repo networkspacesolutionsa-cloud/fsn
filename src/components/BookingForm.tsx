@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { CalendarClockVisual } from './ServiceVisuals';
-import { MapPin, CheckCircle, AlertCircle, Loader2, MessageCircle, RefreshCw, Send } from 'lucide-react';
+import { MapPin, CheckCircle, AlertCircle, Loader2, MessageCircle, RefreshCw, Send, CreditCard } from 'lucide-react';
 import { useContent, whatsappUrl } from '../content/ContentContext';
 import { supabase } from '../lib/supabase';
 import { normalizeSaudiPhone, formatSaudiPhone, SAUDI_PHONE_ERROR } from '../lib/phone';
+import { onlinePriceOf } from '../content/pricing';
+import { callTamara, formatSar } from '../lib/tamara';
 
 interface BookingFormProps {
   initialService?: string;
@@ -21,6 +23,8 @@ export const BookingForm: React.FC<BookingFormProps> = ({ initialService = '', i
   const [city, setCity] = useState('الرياض');
   const [serviceLocation, setServiceLocation] = useState('');
   const [notes, setNotes] = useState('');
+  const [payWithTamara, setPayWithTamara] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
 
   const [isLocating, setIsLocating] = useState(false);
   const [locationSuccess, setLocationSuccess] = useState(false);
@@ -118,11 +122,26 @@ export const BookingForm: React.FC<BookingFormProps> = ({ initialService = '', i
     }
 
     setBookingRef(generatedRef);
+
+    // Fixed-price service + "pay now": go straight to Tamara. The amount is set by the server.
+    if (supabase && onlinePrice && payWithTamara) {
+      try {
+        const { url } = await callTamara<{ url: string }>({ action: 'booking', ref: generatedRef });
+        window.location.href = url;
+        return;
+      } catch (err) {
+        console.error('Tamara checkout failed:', err);
+        setPaymentError('تم استلام طلبك، لكن تعذر فتح صفحة الدفع عبر تمارا الآن. سنرسل لك رابط الدفع عبر واتساب، أو يمكنك الدفع بعد تنفيذ الخدمة.');
+      }
+    }
+
     setLoading(false);
     setSubmitted(true);
   };
 
   const departmentServices = services.find((c) => c.name === department)?.items ?? [];
+  const selectedItem = departmentServices.find((item) => item.title === serviceRequired);
+  const onlinePrice = supabase && selectedItem ? onlinePriceOf(selectedItem) : null;
 
   const handleWhatsAppConfirm = () => {
     const message = `السلام عليكم ورحمة الله،
@@ -152,6 +171,8 @@ export const BookingForm: React.FC<BookingFormProps> = ({ initialService = '', i
     setNotes('');
     setLocationSuccess(false);
     setErrorMessage('');
+    setPayWithTamara(false);
+    setPaymentError('');
   };
 
   return (
@@ -174,6 +195,13 @@ export const BookingForm: React.FC<BookingFormProps> = ({ initialService = '', i
             <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-6">
               شكرًا لك يا <span className="font-bold text-slate-900 dark:text-white">{name}</span>. وصل طلبك إلى فريق فضاء الشبكات، وسنتواصل معك في أقرب وقت لتأكيد الموعد وتنسيق تفاصيل الخدمة والمعاينة.
             </p>
+
+            {paymentError && (
+              <div className="w-full mb-4 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-800 dark:text-amber-200 text-xs text-right flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                <span>{paymentError}</span>
+              </div>
+            )}
 
             <div className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4 text-right text-xs space-y-2 mb-6">
               <div className="flex justify-between gap-4">
@@ -471,6 +499,50 @@ export const BookingForm: React.FC<BookingFormProps> = ({ initialService = '', i
                   />
                 </div>
 
+                {/* Payment choice: only for services with a fixed price */}
+                {onlinePrice && (
+                  <fieldset>
+                    <legend className="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 mb-1.5 text-right">
+                      طريقة الدفع
+                    </legend>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {[
+                        {
+                          value: false,
+                          title: 'الدفع بعد تنفيذ الخدمة',
+                          note: 'نؤكد الموعد معك أولًا، وتدفع عند الانتهاء.',
+                        },
+                        {
+                          value: true,
+                          title: `ادفع الآن عبر تمارا (${formatSar(onlinePrice)})`,
+                          note: 'قسّمها على دفعات بدون فوائد، وتنتقل لصفحة تمارا بعد إرسال الطلب.',
+                        },
+                      ].map((option) => (
+                        <label
+                          key={String(option.value)}
+                          className={`flex items-start gap-2.5 p-3 rounded-xl border cursor-pointer transition text-right ${
+                            payWithTamara === option.value
+                              ? 'border-blue-600 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-600/20'
+                              : 'border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="payment"
+                            checked={payWithTamara === option.value}
+                            onChange={() => setPayWithTamara(option.value)}
+                            className="mt-1 accent-blue-600"
+                          />
+                          <span>
+                            <span className="block text-sm font-bold text-slate-900 dark:text-white">{option.title}</span>
+                            <span className="block text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{option.note}</span>
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                )}
+
                 {/* Submit Button */}
                 <div className="pt-2">
                   <button
@@ -481,12 +553,12 @@ export const BookingForm: React.FC<BookingFormProps> = ({ initialService = '', i
                     {loading ? (
                       <>
                         <Loader2 className="w-5 h-5 animate-spin" />
-                        <span>جاري إرسال طلبك...</span>
+                        <span>{onlinePrice && payWithTamara ? 'جاري تحويلك إلى تمارا...' : 'جاري إرسال طلبك...'}</span>
                       </>
                     ) : (
                       <>
-                        <Send className="w-4 h-4" />
-                        <span>إرسال طلب الحجز</span>
+                        {onlinePrice && payWithTamara ? <CreditCard className="w-4 h-4" /> : <Send className="w-4 h-4" />}
+                        <span>{onlinePrice && payWithTamara ? 'إرسال الطلب والدفع عبر تمارا' : 'إرسال طلب الحجز'}</span>
                       </>
                     )}
                   </button>

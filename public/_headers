@@ -3,6 +3,10 @@
   X-Robots-Tag: noindex, nofollow
 /admin/*
   X-Robots-Tag: noindex, nofollow
+/pay
+  X-Robots-Tag: noindex, nofollow
+/pay/*
+  X-Robots-Tag: noindex, nofollow
 
 # Hashed build files never change: let browsers cache them for a year (faster repeat visits)
 /assets/*
