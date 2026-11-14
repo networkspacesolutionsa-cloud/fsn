@@ -112,7 +112,7 @@ ${payUrl(p)}`;
             <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${STATUS[p.status].className}`}>{STATUS[p.status].label}</span>
           </div>
           <p className="text-slate-600">
-            {p.description} · {p.source === 'online' ? 'دفع عند الحجز' : 'رابط دفع'}
+            {p.description} · {p.source === 'online' ? 'دفع من العميل' : 'رابط دفع'}
           </p>
           {p.status === 'paid' && p.paid_at && (
             <p className="text-emerald-700">دُفع في {new Date(p.paid_at).toLocaleString('ar', { dateStyle: 'medium', timeStyle: 'short' })}</p>

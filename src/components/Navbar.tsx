@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { Logo } from './Logo';
 import { useLockBodyScroll } from './useLockBodyScroll';
 import { ThemeToggle } from './ThemeToggle';
-import { MessageCircle, Menu, X, Phone, Calendar, ChevronLeft, ChevronDown, Network, Video, Tv, ArrowLeft } from 'lucide-react';
+import { MessageCircle, Menu, X, Phone, Calendar, ChevronLeft, ChevronDown, Network, Video, Tv, ArrowLeft, CreditCard } from 'lucide-react';
 import { useContent, whatsappUrl } from '../content/ContentContext';
 import type { CategoryKey } from '../content/types';
 import { showService } from './serviceNav';
@@ -254,6 +254,15 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange, onOpenBo
               <MessageCircle className="w-5 h-5 text-emerald-400" />
             </button>
 
+            {/* Tamara payment page (customer enters the amount they were quoted) */}
+            <a
+              href="/pay/"
+              className="px-4 py-2.5 rounded-lg border border-blue-500/60 text-blue-300 hover:bg-blue-500/10 text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap flex items-center gap-1.5"
+            >
+              <CreditCard className="w-4 h-4" />
+              <span>ادفع الآن</span>
+            </a>
+
             {/* Book Consultation Button */}
             <button
               onClick={onOpenBooking}
@@ -394,6 +403,14 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, onTabChange, onOpenBo
                 <Calendar className="w-4 h-4" />
                 <span>احجز موعد الآن</span>
               </button>
+
+              <a
+                href="/pay/"
+                className="w-full py-2.5 rounded-lg border border-blue-500/60 text-blue-300 hover:bg-blue-500/10 font-bold text-sm flex items-center justify-center gap-2"
+              >
+                <CreditCard className="w-4 h-4" />
+                <span>ادفع الآن عبر تمارا</span>
+              </a>
 
               <button
                 onClick={openWhatsApp}

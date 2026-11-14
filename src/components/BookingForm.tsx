@@ -236,6 +236,16 @@ export const BookingForm: React.FC<BookingFormProps> = ({ initialService = '', i
                 <span>إرسال طلب جديد</span>
               </button>
             </div>
+
+            {supabase && (
+              <a
+                href={`/pay/?${new URLSearchParams({ ref: bookingRef, name, phone, note: serviceRequired }).toString()}`}
+                className="mt-3 w-full py-3 px-4 rounded-xl border border-blue-300 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/40 font-bold text-sm flex items-center justify-center gap-2 transition"
+              >
+                <CreditCard className="w-4 h-4" />
+                <span>ادفع عبر تمارا بعد الاتفاق على السعر</span>
+              </a>
+            )}
           </div>
         ) : (
           /* Normal Booking Form Grid */
