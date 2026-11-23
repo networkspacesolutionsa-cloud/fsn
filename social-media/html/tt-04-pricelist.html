@@ -1,0 +1,102 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400..900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#000}
+body{font-family:'Cairo',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.card{position:relative;overflow:hidden;display:flex;flex-direction:column;
+  background:#0B1A30;color:#fff}
+.card.light{background:#EEF3FA;color:#0B1A30}
+/* خلفية: توهج + شبكة نقاط */
+.glow{position:absolute;inset:0;pointer-events:none}
+.glow i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55}
+.g1{width:640px;height:640px;background:#1E6FD9;top:-220px;left:-180px}
+.g2{width:520px;height:520px;background:#0EA5E9;bottom:-200px;right:-160px;opacity:.38}
+.light .g1{opacity:.22}.light .g2{opacity:.18}
+.grid{position:absolute;inset:0;opacity:.14;
+  background-image:linear-gradient(#ffffff22 1px,transparent 1px),linear-gradient(90deg,#ffffff22 1px,transparent 1px);
+  background-size:60px 60px;mask-image:radial-gradient(circle at 70% 25%,#000 10%,transparent 72%)}
+.light .grid{background-image:linear-gradient(#0B1A3022 1px,transparent 1px),linear-gradient(90deg,#0B1A3022 1px,transparent 1px);opacity:.5}
+.watermark{position:absolute;opacity:.055;pointer-events:none}
+/* الهيدر */
+.head{position:relative;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.chip{background:#fff;border-radius:22px;padding:18px 26px;display:flex;align-items:center;
+  box-shadow:0 18px 40px rgba(0,0,0,.25)}
+.chip img{display:block;height:54px;width:auto}
+.tag{display:inline-flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.2px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:999px;
+  padding:14px 24px;font-size:26px;color:#CFE3FF}
+.light .tag{background:#fff;border-color:#CBD8EA;color:#1E4C8A}
+.tag b{width:12px;height:12px;border-radius:50%;background:#22D3EE;display:block}
+/* المحتوى */
+.body{position:relative;flex:1;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{display:inline-flex;align-self:flex-start;align-items:center;gap:12px;font-size:28px;font-weight:800;
+  color:#0B1A30;background:linear-gradient(90deg,#22D3EE,#38BDF8);border-radius:999px;padding:12px 28px}
+h1{font-weight:900;line-height:1.18;letter-spacing:-.5px}
+.sub{color:#B9CBE4;font-weight:500;line-height:1.75}
+.light .sub{color:#3C5578}
+/* السعر */
+.price{display:flex;align-items:center;gap:26px;background:linear-gradient(135deg,#1E6FD9,#0EA5E9);
+  border-radius:32px;padding:30px 40px;box-shadow:0 24px 60px rgba(30,111,217,.38)}
+.price .num{font-size:110px;font-weight:900;line-height:1;letter-spacing:-2px;color:#fff;direction:ltr}
+.price .cur{font-size:38px;font-weight:800;color:#DFF1FF}
+.price .note{font-size:28px;font-weight:700;color:#EAF6FF;line-height:1.5;border-right:3px solid rgba(255,255,255,.4);padding-right:26px}
+/* النقاط */
+ul{list-style:none;display:flex;flex-direction:column;gap:22px}
+li{display:flex;align-items:flex-start;gap:18px;font-size:34px;font-weight:600;line-height:1.5;color:#E6EEFA}
+.light li{color:#1B3252}
+li svg{flex:none;margin-top:4px}
+/* جدول الأسعار */
+.rows{display:flex;flex-direction:column;gap:18px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:20px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:24px;padding:26px 32px}
+.light .row{background:#fff;border-color:#D7E2F1;box-shadow:0 10px 24px rgba(11,26,48,.06)}
+.row .n{font-size:34px;font-weight:700;line-height:1.35}
+.row .p{font-size:40px;font-weight:900;color:#22D3EE;direction:ltr;white-space:nowrap}
+.light .row .p{color:#1E6FD9}
+.row small{display:block;font-size:24px;font-weight:600;color:#9DB4D4;margin-top:6px}
+.light .row small{color:#5B7496}
+/* الفوتر */
+.foot{position:relative;display:flex;align-items:center;justify-content:space-between;gap:20px;
+  border-top:1px solid rgba(255,255,255,.16);padding-top:30px}
+.light .foot{border-color:#C9D7E8}
+.foot .meta{display:flex;align-items:center;gap:18px;font-size:27px;font-weight:700;color:#C3D6F0}
+.light .foot .meta{color:#36507A}
+.foot .dot{width:8px;height:8px;border-radius:50%;background:#22D3EE}
+.foot .site{font-size:30px;font-weight:900;color:#fff;direction:ltr;letter-spacing:.4px}
+.light .foot .site{color:#0B1A30}
+.cta{display:inline-flex;align-items:center;gap:14px;background:#fff;color:#0B1A30;font-weight:900;
+  border-radius:999px;padding:22px 40px;font-size:32px}
+.light .cta{background:#0B1A30;color:#fff}
+.note{font-size:24px;font-weight:600;color:#8FA8C9;line-height:1.6}
+.light .note{color:#5B7496}
+
+.card{width:1080px;height:1920px}
+
+  .card{padding:150px 80px 430px}
+  .watermark{width:820px;left:50%;transform:translateX(-50%);bottom:150px}
+  h1{font-size:92px;margin-top:44px}
+  .sub{font-size:40px;margin-top:34px}
+  ul{margin-top:54px}
+  li{font-size:40px}
+  .body{justify-content:flex-start;padding-top:90px}
+  .price{margin-top:54px}
+  .price .num{font-size:130px}
+  .rows{margin-top:48px;gap:16px}
+  .row{padding:22px 32px}
+  .row .n{font-size:38px}.row .p{font-size:44px}
+  .safe{position:absolute;left:0;right:0;bottom:330px;display:flex;justify-content:center}</style></head><body><div class="card ">
+      <div class="glow"><i class="g1"></i><i class="g2"></i></div><div class="grid"></div>
+  <img class="watermark" src="../assets/logo-mark.png">
+      <div class="head">
+        <div class="chip"><img src="../assets/logo-full.png"></div>
+        <div class="tag"><b></b> الرياض</div>
+      </div>
+      <div class="body">
+        <span class="eyebrow">بدون مفاجآت</span>
+        <h1>أسعارنا واضحة</h1>
+        
+        <div class="rows"><div class="row"><div class="n">فيش شبكة جداري</div><div class="p">120 ريال</div></div><div class="row"><div class="n">كاميرا Wi-Fi</div><div class="p">150 ريال</div></div><div class="row"><div class="n">مقوي شبكة Wi-Fi</div><div class="p">150 ريال</div></div><div class="row"><div class="n">كاميرا مراقبة سلكية</div><div class="p">250 ريال</div></div><div class="row"><div class="n">تركيب إنتركوم</div><div class="p">400 ريال</div></div></div>
+      </div>
+      <div class="safe"><span class="cta">اطلب عرض سعر · fsn-networks.sa</span></div>
+    </div></body></html>
