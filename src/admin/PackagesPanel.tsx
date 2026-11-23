@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   Field,
+  HiddenTag,
   ImageInput,
   ListControls,
   LoadingBlock,
@@ -46,7 +47,7 @@ export const PackagesPanel: React.FC = () => {
     <div>
       <PanelHeader
         title="الباقات"
-        description="كل باقة تظهر كبطاقة فردية بسعرها. زر «اطلب هذه الباقة» يفتح نموذج الحجز مع اسم الباقة."
+        description="كل باقة تظهر كبطاقة فردية بسعرها. زر «اطلب هذه الباقة» يفتح نموذج الحجز مع اسم الباقة. زر العين يخفي الباقة من الموقع دون حذفها."
         actions={
           <Button onClick={addPackage}>
             <Plus className="w-4 h-4" /> باقة فردية
@@ -83,9 +84,10 @@ export const PackagesPanel: React.FC = () => {
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="font-bold text-sm text-slate-900 truncate flex items-center gap-1.5">
+                    <p className={`font-bold text-sm flex items-center gap-1.5 ${pkg.hidden ? 'text-slate-400' : 'text-slate-900'}`}>
                       {pkg.featured && <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400 shrink-0" />}
-                      {pkg.title || 'بدون عنوان'}
+                      <span className="truncate">{pkg.title || 'بدون عنوان'}</span>
+                      {pkg.hidden && <HiddenTag />}
                     </p>
                     <p className="text-[11px] text-slate-500 truncate">{summary.filter(Boolean).join(' · ')}</p>
                   </div>
@@ -94,6 +96,8 @@ export const PackagesPanel: React.FC = () => {
                   index={index}
                   count={packages.length}
                   onMove={(from, to) => editor.update(moveItem(packages, from, to))}
+                  hidden={pkg.hidden}
+                  onToggleHidden={() => updatePackage({ ...pkg, hidden: !pkg.hidden })}
                   onDelete={() => {
                     if (window.confirm(`حذف باقة «${pkg.title}»؟`)) editor.update(packages.filter((x) => x.id !== pkg.id));
                   }}

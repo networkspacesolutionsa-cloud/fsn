@@ -19,6 +19,12 @@ export const mergeContent = (rows: { key: string; data: unknown }[]): SiteConten
       (merged as any)[row.key] = row.data;
     }
   }
+  // Items hidden in the control panel stay saved but never reach the public pages
+  const shown = <T extends { hidden?: boolean }>(list: T[]) => list.filter((item) => !item.hidden);
+  merged.services = merged.services.map((category) => ({ ...category, items: shown(category.items) }));
+  merged.gallery = shown(merged.gallery);
+  merged.offers = shown(merged.offers);
+  merged.packages = shown(merged.packages);
   return merged;
 };
 

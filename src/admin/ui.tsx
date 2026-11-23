@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowDown, ArrowUp, ImagePlus, Loader2, Trash2, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, Eye, EyeOff, ImagePlus, Loader2, Trash2, X } from 'lucide-react';
 import { supabase, IMAGES_BUCKET } from '../lib/supabase';
 import { DEFAULT_CONTENT } from '../content/defaults';
 import type { ContentKey, SiteContent } from '../content/types';
@@ -117,14 +117,31 @@ export const PanelHeader: React.FC<{ title: string; description: string; actions
   </div>
 );
 
-/** Up / down / delete controls for an item in an editable list */
+/** Hide-show / up / down / delete controls for an item in an editable list */
 export const ListControls: React.FC<{
   index: number;
   count: number;
   onMove: (from: number, to: number) => void;
   onDelete: () => void;
-}> = ({ index, count, onMove, onDelete }) => (
+  hidden?: boolean;
+  /** Shows the eye button: hides the item from the site without deleting it */
+  onToggleHidden?: () => void;
+}> = ({ index, count, onMove, onDelete, hidden, onToggleHidden }) => (
   <div className="flex items-center gap-1">
+    {onToggleHidden && (
+      <button
+        type="button"
+        title={hidden ? 'إظهار في الموقع' : 'إخفاء من الموقع'}
+        aria-label={hidden ? 'إظهار في الموقع' : 'إخفاء من الموقع'}
+        aria-pressed={!!hidden}
+        onClick={onToggleHidden}
+        className={`w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer ${
+          hidden ? 'text-amber-700 bg-amber-100 hover:bg-amber-200' : 'text-slate-500 hover:bg-slate-100'
+        }`}
+      >
+        {hidden ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+      </button>
+    )}
     <button
       type="button"
       title="تحريك للأعلى"
@@ -152,6 +169,11 @@ export const ListControls: React.FC<{
       <Trash2 className="w-4 h-4" />
     </button>
   </div>
+);
+
+/** Tag next to the title of an item that is hidden from the site */
+export const HiddenTag: React.FC = () => (
+  <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold shrink-0">مخفي</span>
 );
 
 export const moveItem = <T,>(list: T[], from: number, to: number): T[] => {

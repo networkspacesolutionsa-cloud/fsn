@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   Field,
+  HiddenTag,
   ImageInput,
   ListControls,
   LoadingBlock,
@@ -115,7 +116,7 @@ export const ServicesPanel: React.FC = () => {
 
   return (
     <div>
-      <PanelHeader title="الخدمات والأسعار" description="عدّل بطاقات الأقسام والخدمات والأسعار. تظهر الخدمات أيضًا في قائمة نموذج الحجز." />
+      <PanelHeader title="الخدمات والأسعار" description="عدّل بطاقات الأقسام والخدمات والأسعار. تظهر الخدمات أيضًا في قائمة نموذج الحجز. زر العين يخفي الخدمة من الموقع دون حذفها." />
 
       <div className="flex flex-wrap gap-2 mb-4">
         {categories.map((c) => (
@@ -184,7 +185,8 @@ export const ServicesPanel: React.FC = () => {
                       className="flex-1 flex items-center gap-2 text-right cursor-pointer min-w-0"
                     >
                       <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
-                      <span className="font-bold text-sm text-slate-900 truncate">{item.title || 'بدون اسم'}</span>
+                      <span className={`font-bold text-sm truncate ${item.hidden ? 'text-slate-400' : 'text-slate-900'}`}>{item.title || 'بدون اسم'}</span>
+                      {item.hidden && <HiddenTag />}
                       {item.badge && (
                         <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold shrink-0">{item.badge}</span>
                       )}
@@ -193,6 +195,8 @@ export const ServicesPanel: React.FC = () => {
                       index={index}
                       count={category.items.length}
                       onMove={(from, to) => setItems(moveItem(category.items, from, to))}
+                      hidden={item.hidden}
+                      onToggleHidden={() => setItems(category.items.map((x) => (x.id === item.id ? { ...x, hidden: !x.hidden } : x)))}
                       onDelete={() => {
                         if (window.confirm(`حذف «${item.title}»؟`)) setItems(category.items.filter((x) => x.id !== item.id));
                       }}

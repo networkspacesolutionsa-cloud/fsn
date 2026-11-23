@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   Field,
+  HiddenTag,
   ListControls,
   LoadingBlock,
   PanelHeader,
@@ -53,7 +54,7 @@ export const OffersPanel: React.FC = () => {
     <div>
       <PanelHeader
         title="عروض أسعار المشاريع"
-        description="العروض التي تظهر في قسم «عروض أسعار المشاريع». زر «اطلب هذا العرض» يفتح نموذج الحجز مع اسم العرض."
+        description="العروض التي تظهر في قسم «عروض أسعار المشاريع». زر «اطلب هذا العرض» يفتح نموذج الحجز مع اسم العرض. زر العين يخفي العرض من الموقع دون حذفه."
         actions={
           <Button onClick={addOffer}>
             <Plus className="w-4 h-4" /> إضافة عرض
@@ -84,9 +85,10 @@ export const OffersPanel: React.FC = () => {
                 >
                   <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
                   <div className="min-w-0">
-                    <p className="font-bold text-sm text-slate-900 truncate flex items-center gap-1.5">
+                    <p className={`font-bold text-sm flex items-center gap-1.5 ${offer.hidden ? 'text-slate-400' : 'text-slate-900'}`}>
                       {offer.featured && <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400 shrink-0" />}
-                      {offer.title || 'بدون عنوان'}
+                      <span className="truncate">{offer.title || 'بدون عنوان'}</span>
+                      {offer.hidden && <HiddenTag />}
                     </p>
                     <p className="text-[11px] text-slate-500 truncate">
                       {offer.category} {offer.price && `· ${offer.price}`}
@@ -97,6 +99,8 @@ export const OffersPanel: React.FC = () => {
                   index={index}
                   count={offers.length}
                   onMove={(from, to) => editor.update(moveItem(offers, from, to))}
+                  hidden={offer.hidden}
+                  onToggleHidden={() => updateOffer({ ...offer, hidden: !offer.hidden })}
                   onDelete={() => {
                     if (window.confirm(`حذف عرض «${offer.title}»؟`)) editor.update(offers.filter((x) => x.id !== offer.id));
                   }}

@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   Field,
+  HiddenTag,
   ImageInput,
   ListControls,
   LoadingBlock,
@@ -54,7 +55,7 @@ export const GalleryPanel: React.FC = () => {
     <div>
       <PanelHeader
         title="أعمال سابقة"
-        description="الأعمال التي تظهر في قسم «أعمال سابقة». الترتيب هنا هو ترتيب الظهور في الموقع."
+        description="الأعمال التي تظهر في قسم «أعمال سابقة». الترتيب هنا هو ترتيب الظهور في الموقع. زر العين يخفي العمل من الموقع دون حذفه."
         actions={
           <Button onClick={addItem}>
             <Plus className="w-4 h-4" /> إضافة عمل
@@ -88,7 +89,10 @@ export const GalleryPanel: React.FC = () => {
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="font-bold text-sm text-slate-900 truncate">{item.title || 'بدون عنوان'}</p>
+                    <p className={`font-bold text-sm flex items-center gap-1.5 ${item.hidden ? 'text-slate-400' : 'text-slate-900'}`}>
+                      <span className="truncate">{item.title || 'بدون عنوان'}</span>
+                      {item.hidden && <HiddenTag />}
+                    </p>
                     <p className="text-[11px] text-slate-500 truncate">
                       {item.categoryLabel} · {item.location} {!item.image && '· بدون صورة'}
                       {item.image && item.beforeImage && '· قبل وبعد'}
@@ -100,6 +104,8 @@ export const GalleryPanel: React.FC = () => {
                   index={index}
                   count={items.length}
                   onMove={(from, to) => editor.update(moveItem(items, from, to))}
+                  hidden={item.hidden}
+                  onToggleHidden={() => updateItem({ ...item, hidden: !item.hidden })}
                   onDelete={() => {
                     if (window.confirm(`حذف «${item.title}» من المعرض؟`)) editor.update(items.filter((x) => x.id !== item.id));
                   }}

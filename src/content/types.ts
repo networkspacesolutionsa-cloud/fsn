@@ -36,6 +36,8 @@ export interface ServiceItem {
   /** 'plain' = white box, 'info' = light-blue box */
   detailsTone: 'plain' | 'info';
   buttonLabel: string;
+  /** Hidden from the public site with the eye button in the control panel; kept in the saved content */
+  hidden?: boolean;
 }
 
 export interface ServiceCategory {
@@ -72,6 +74,8 @@ export interface GalleryItem {
   beforeImage?: string;
   /** Label on the first photo of the slider; empty = "قبل" (e.g. "أثناء التركيب") */
   beforeLabel?: string;
+  /** Hidden from the public site with the eye button in the control panel; kept in the saved content */
+  hidden?: boolean;
 }
 
 export interface HeroHighlight {
@@ -110,6 +114,8 @@ export interface Offer {
   note: string;
   /** Highlighted with a blue border */
   featured: boolean;
+  /** Hidden from the public site with the eye button in the control panel; kept in the saved content */
+  hidden?: boolean;
 }
 
 export interface ServicePackage {
@@ -132,6 +138,8 @@ export interface ServicePackage {
   featured: boolean;
   /** Optional photo at the top of the card */
   image?: string;
+  /** Hidden from the public site with the eye button in the control panel; kept in the saved content */
+  hidden?: boolean;
 }
 
 export interface SiteContent {
