@@ -101,16 +101,6 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ onSelectBookingF
                 الشبكات وكبائن السيرفرات
               </button>
               <button
-                onClick={() => setSelectedCategory('cameras')}
-                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer whitespace-nowrap ${
-                  selectedCategory === 'cameras'
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700'
-                }`}
-              >
-                كاميرات المراقبة 4K
-              </button>
-              <button
                 onClick={() => setSelectedCategory('intercom')}
                 className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer whitespace-nowrap ${
                   selectedCategory === 'intercom'

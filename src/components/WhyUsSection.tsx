@@ -1,5 +1,5 @@
 import React from 'react';
-import { HelpCircle, CheckCircle, ArrowRight, Lightbulb, Workflow, ShieldCheck, HeartHandshake } from 'lucide-react';
+import { HelpCircle, CheckCircle, ArrowRight, Workflow, ShieldCheck, HeartHandshake } from 'lucide-react';
 
 export const WhyUsSection: React.FC = () => {
   return (
@@ -51,7 +51,7 @@ export const WhyUsSection: React.FC = () => {
         </div>
 
         {/* Part 2: كيف نعمل؟ */}
-        <div className="mb-20">
+        <div>
           <div className="text-center max-w-3xl mx-auto mb-12">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800/60 text-blue-700 dark:text-blue-300 text-xs font-bold mb-3">
               <Workflow className="w-3.5 h-3.5" />
@@ -101,28 +101,6 @@ export const WhyUsSection: React.FC = () => {
                 <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-2">التنفيذ والاختبار</h4>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                   بعد موافقتك نبدأ بالتنفيذ والتركيب والبرمجة، ثم نتأكد من جاهزية النظام وتشغيله بالشكل الصحيح وتدريبك على استخدامه.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Part 3: هل تعلم؟ (Did You Know?) Box */}
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-r from-blue-900 via-blue-950 to-slate-900 rounded-3xl p-6 sm:p-10 text-white shadow-xl border border-blue-800/60 relative overflow-hidden text-right">
-            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-6">
-              <div className="w-14 h-14 rounded-2xl bg-blue-400/20 border border-blue-400/40 text-blue-300 flex items-center justify-center flex-shrink-0">
-                <Lightbulb className="w-8 h-8" />
-              </div>
-              <div>
-                <span className="inline-block px-3 py-1 rounded-full bg-blue-400/20 text-blue-300 text-xs font-bold mb-2">
-                  هل تعلم؟
-                </span>
-                <h3 className="text-xl sm:text-2xl font-black text-white mb-2">
-                  الكاميرا الأغلى ليست دائمًا الأفضل
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
-                  اختيار الكاميرا المناسبة يعتمد على المكان الذي سيتم تركيبها فيه وزاوية الرؤية والإضاءة والمسافة وطبيعة الاستخدام. لذلك اختيار الحل الصحيح أهم من اختيار الكاميرا الأعلى سعرًا.
                 </p>
               </div>
             </div>
