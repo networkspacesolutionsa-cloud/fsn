@@ -5,8 +5,9 @@ import { ContentProvider, mergeContent } from './content/ContentContext';
 import { SitePage } from './pages/SitePage';
 import { SERVICE_GALLERY, Route, servicePath } from './seo/pages';
 import { canonicalPath, renderHead } from './seo/head';
+import { POLICY_KEYS, policyPath } from './content/policies';
 
-export { mergeContent, renderHead, canonicalPath, servicePath, SERVICE_GALLERY };
+export { mergeContent, renderHead, canonicalPath, servicePath, SERVICE_GALLERY, POLICY_KEYS, policyPath };
 
 export const render = (rows: { key: string; data: unknown }[], route: Route) =>
   renderToString(

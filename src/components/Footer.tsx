@@ -4,6 +4,7 @@ import { Phone, Mail, MapPin, MessageCircle, ChevronLeft } from 'lucide-react';
 import { TabKey } from './Navbar';
 import { useContent, whatsappUrl, telUrl } from '../content/ContentContext';
 import { servicePath } from '../seo/pages';
+import { POLICIES, POLICY_KEYS, policyPath } from '../content/policies';
 
 interface FooterProps {
   onTabChange: (tab: TabKey) => void;
@@ -151,10 +152,20 @@ export const Footer: React.FC<FooterProps> = ({ onTabChange, onOpenBooking }) =>
               </>
             )}
           </div>
-          <div className="flex items-center gap-4">
-            <span className="hover:text-slate-400 transition cursor-pointer">سياسة الخصوصية</span>
-            <span>|</span>
-            <span className="hover:text-slate-400 transition cursor-pointer">الشروط والأحكام</span>
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-center">
+            <nav aria-label="السياسات" className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+              {POLICY_KEYS.map((key) => (
+                <a key={key} href={policyPath(key)} className="hover:text-blue-400 transition">
+                  {POLICIES[key].linkLabel}
+                </a>
+              ))}
+            </nav>
+            <span className="hidden sm:inline">|</span>
+            <a href={telUrl(contact)} className="hover:text-blue-400 transition flex items-center gap-1">
+              <Phone className="w-3.5 h-3.5 text-blue-400" />
+              <span>للتواصل:</span>
+              <span dir="ltr" className="font-mono text-slate-300">{contact.phoneDisplay}</span>
+            </a>
           </div>
         </div>
       </div>

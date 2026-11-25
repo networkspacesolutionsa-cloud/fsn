@@ -3,7 +3,16 @@ import App from '../App';
 import type { Route } from '../seo/pages';
 import { ServicePage } from './ServicePage';
 import { NotFoundPage } from './NotFoundPage';
+import { PolicyPage } from './PolicyPage';
 
 /** The public page for a route (the control panel is loaded separately in main.tsx) */
 export const SitePage: React.FC<{ route: Route }> = ({ route }) =>
-  route.page === 'service' ? <ServicePage category={route.category} /> : route.page === 'home' ? <App /> : <NotFoundPage />;
+  route.page === 'service' ? (
+    <ServicePage category={route.category} />
+  ) : route.page === 'policy' ? (
+    <PolicyPage policy={route.policy} />
+  ) : route.page === 'home' ? (
+    <App />
+  ) : (
+    <NotFoundPage />
+  );

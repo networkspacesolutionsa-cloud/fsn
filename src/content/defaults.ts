@@ -4,9 +4,9 @@ import type { ContactInfo, GalleryItem, HeroContent, Offer, ServiceCategory, Ser
 // point for anything the admin hasn't edited in the control panel.
 
 export const DEFAULT_CONTACT: ContactInfo = {
-  phoneDisplay: '+962 77 894 7384',
-  phone: '962778947384',
-  whatsapp: '962778947384',
+  phoneDisplay: '+966 50 596 4469',
+  phone: '966505964469',
+  whatsapp: '966505964469',
   email: 'info@fsn-networks.sa',
   locationText: 'الرياض، المملكة العربية السعودية',
   mapUrl: 'https://maps.google.com/?q=Riyadh+Saudi+Arabia',

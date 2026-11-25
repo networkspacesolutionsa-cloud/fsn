@@ -10,7 +10,7 @@ const env = loadEnv('production', process.cwd(), '');
 const siteUrl = (env.VITE_SITE_URL || '').replace(/\/+$/, '');
 if (!siteUrl) throw new Error('VITE_SITE_URL is not set (see .env.production)');
 
-const { render, renderHead, canonicalPath, mergeContent, servicePath, SERVICE_GALLERY } = await import(
+const { render, renderHead, canonicalPath, mergeContent, servicePath, SERVICE_GALLERY, POLICY_KEYS, policyPath } = await import(
   pathToFileURL('dist-ssr/entry-server.js').href
 );
 
@@ -53,7 +53,8 @@ const write = async (file, html) => {
 };
 
 const serviceRoutes = content.services.map((c) => ({ page: 'service', category: c.key }));
-for (const route of [{ page: 'home' }, ...serviceRoutes]) {
+const policyRoutes = POLICY_KEYS.map((policy) => ({ page: 'policy', policy }));
+for (const route of [{ page: 'home' }, ...serviceRoutes, ...policyRoutes]) {
   await write(`dist${canonicalPath(route)}index.html`, pageHtml(route, render(rows, route)));
 }
 // Cloudflare serves this with a 404 status for unknown paths (wrangler.jsonc not_found_handling)
@@ -88,6 +89,7 @@ const sitemapPages = [
     priority: '0.9',
     images: [c.cardImage, ...workPhotos(content.gallery.filter((item) => SERVICE_GALLERY[c.key].includes(item.category)))],
   })),
+  ...POLICY_KEYS.map((key) => ({ path: policyPath(key), priority: '0.3', images: [] })),
 ];
 const lastmod = new Date().toISOString().slice(0, 10);
 const urlEntry = ({ path, priority, images }) => {
@@ -113,5 +115,5 @@ ${sitemapPages.map(urlEntry).join('\n')}
 
 await rm('dist-ssr', { recursive: true, force: true });
 console.log(
-  `prerender: ${1 + serviceRoutes.length} pages + 404 rendered (${rows.length} content rows) for ${siteUrl}`
+  `prerender: ${1 + serviceRoutes.length + policyRoutes.length} pages + 404 rendered (${rows.length} content rows) for ${siteUrl}`
 );

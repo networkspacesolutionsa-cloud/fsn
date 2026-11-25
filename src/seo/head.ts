@@ -1,5 +1,6 @@
 import type { SiteContent } from '../content/types';
 import { HOME_SEO, NOT_FOUND_SEO, Route, SERVICE_SEO, servicePath } from './pages';
+import { POLICIES, policyPath } from '../content/policies';
 import { BRAND_NAME, buildStructuredData } from './structuredData';
 
 const escapeAttr = (value: string) =>
@@ -10,7 +11,13 @@ const safeJson = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003
 
 /** Path of the page, or null when it must not be indexed (404, control panel, payment links) */
 export const canonicalPath = (route: Route) =>
-  route.page === 'home' ? '/' : route.page === 'service' ? servicePath(route.category) : null;
+  route.page === 'home'
+    ? '/'
+    : route.page === 'service'
+      ? servicePath(route.category)
+      : route.page === 'policy'
+        ? policyPath(route.policy)
+        : null;
 
 /** The <head> tags that differ per page: title, description, canonical, link previews and JSON-LD */
 export const renderHead = (route: Route, content: SiteContent, siteUrl: string) => {
@@ -19,6 +26,8 @@ export const renderHead = (route: Route, content: SiteContent, siteUrl: string) 
       ? HOME_SEO
       : route.page === 'service'
         ? SERVICE_SEO[route.category]
+        : route.page === 'policy'
+          ? { title: POLICIES[route.policy].seoTitle, description: POLICIES[route.policy].seoDescription }
         : route.page === 'admin'
           ? { title: `لوحة التحكم | ${BRAND_NAME}`, description: '' }
           : route.page === 'pay'

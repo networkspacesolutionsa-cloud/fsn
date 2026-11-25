@@ -1,4 +1,5 @@
 import type { CategoryKey, GalleryCategory } from '../content/types';
+import { POLICY_KEYS, PolicyKey, policyPath } from '../content/policies';
 
 // Each service category has its own page so it can rank for its own searches
 // ("تركيب كاميرات مراقبة الرياض" etc.). Slugs are part of the public URL: don't rename them.
@@ -20,6 +21,7 @@ export const SERVICE_GALLERY: Record<CategoryKey, GalleryCategory[]> = {
 export type Route =
   | { page: 'home' }
   | { page: 'service'; category: CategoryKey }
+  | { page: 'policy'; policy: PolicyKey }
   | { page: 'admin' }
   | { page: 'pay' }
   | { page: 'not-found' };
@@ -29,6 +31,8 @@ export const matchRoute = (pathname: string): Route => {
   if (path === '/') return { page: 'home' };
   if (path === '/admin') return { page: 'admin' };
   if (path === '/pay') return { page: 'pay' };
+  const policy = POLICY_KEYS.find((key) => `${path}/` === policyPath(key));
+  if (policy) return { page: 'policy', policy };
   const category = (Object.keys(SERVICE_SLUGS) as CategoryKey[]).find((key) => `${path}/` === servicePath(key));
   return category ? { page: 'service', category } : { page: 'not-found' };
 };
